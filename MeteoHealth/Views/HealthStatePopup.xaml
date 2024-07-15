@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="MeteoHealth.Views.HealthStatePopup"
+           Size="300, 300"
+           IsLightDismissEnabled="False"
+           >
+
+    <StackLayout>
+        <Label Text="How are you today?" />
+        <Slider x:Name="StateSlider"
+                Maximum="5"
+                Minimum="1"
+                ValueChanged="StateSlider_ValueChanged"
+                Value="3"
+                
+                />
+        <Label x:Name="SliderValue" FontSize="120"/>
+        <Button x:Name="SetButton" Text="Ok" Clicked="SetButton_Clicked" />
+    </StackLayout>
+        
+</xct:Popup>
