@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MeteoHealth"  
+             x:Class="MeteoHealth.Views.MainPage"   
+            
+             
+             xmlns:oxy="clr-namespace:OxyPlot.Xamarin.Forms;assembly=OxyPlot.Xamarin.Forms"
+             >
+    
+    <ContentPage.Content>
+        
+        <ScrollView>
+
+        <Grid RowSpacing="20" Padding="10" ColumnSpacing="10">
+             
+                <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                
+                <RowDefinition Height="400" />
+                <RowDefinition Height="200" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="400" />
+                <RowDefinition Height="200" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="400" />
+                <RowDefinition Height="200" />
+                <RowDefinition Height="400" />
+                <RowDefinition Height="200" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Text="Get Location" Clicked="Button_Clicked"/>
+            
+                <Button Text="Open geo window" Clicked="Button_Clicked_1"/>
+                <Label Text="Temperature Data" 
+               Grid.Row="0"
+                       Grid.Column="0"
+               HorizontalOptions="Center" 
+               FontSize="Large"
+               Margin="0,20,0,10" />
+                <!-- Temp Chart -->
+            <oxy:PlotView x:Name="TemperaturePlotView" 
+                      Grid.Row="1"
+                      Grid.Column="0" 
+                      HorizontalOptions="FillAndExpand" 
+                      VerticalOptions="FillAndExpand" 
+                          HeightRequest="300"
+                         />
+            <oxy:PlotView x:Name="TemperatureHealthPlotView"
+                      Grid.Row="2"
+                      Grid.Column="0"
+                      HorizontalOptions="FillAndExpand"
+                      VerticalOptions="FillAndExpand" 
+                          HeightRequest="100"
+                     />
+            
+            <BoxView HeightRequest="20" Grid.Row="3" />
+                <!-- Pressure Chart -->
+                <oxy:PlotView x:Name="PressurePlotView" 
+                      Grid.Row="4"
+                      Grid.Column="0" 
+                      HorizontalOptions="FillAndExpand" 
+                      VerticalOptions="FillAndExpand" 
+                          HeightRequest="300"
+                         />
+                <oxy:PlotView x:Name="PressureHealthPlotView"
+                      Grid.Row="5"
+                      Grid.Column="0"
+                      HorizontalOptions="FillAndExpand"
+                      VerticalOptions="FillAndExpand" 
+                          HeightRequest="100"
+                     />
+                <BoxView HeightRequest="20" Grid.Row="6" />
+                <!-- Humidity Chart -->
+                <oxy:PlotView x:Name="HumidityPlotView" 
+                      Grid.Row="7"
+                      Grid.Column="0" 
+                      HorizontalOptions="FillAndExpand" 
+                      VerticalOptions="FillAndExpand" 
+                          HeightRequest="300"
+                         />
+                <oxy:PlotView x:Name="HumidityHealthPlotView"
+                      Grid.Row="8"
+                      Grid.Column="0"
+                      HorizontalOptions="FillAndExpand"
+                      VerticalOptions="FillAndExpand" 
+                          HeightRequest="100"
+                     />
+                <!-- Wind Chart -->
+                <oxy:PlotView x:Name="WindPlotView" 
+                      Grid.Row="9"
+                      Grid.Column="0" 
+                      HorizontalOptions="FillAndExpand" 
+                      VerticalOptions="FillAndExpand" 
+                          HeightRequest="300"
+                         />
+                <oxy:PlotView x:Name="WindHealthPlotView"
+                      Grid.Row="10"
+                      Grid.Column="0"
+                      HorizontalOptions="FillAndExpand"
+                      VerticalOptions="FillAndExpand" 
+                          HeightRequest="100"
+                     />
+                <!-- PrecipitationProbability Chart -->
+                <oxy:PlotView x:Name="PrecipitationProbabilityPlotView" 
+                      Grid.Row="11"
+                      Grid.Column="0" 
+                      HorizontalOptions="FillAndExpand" 
+                      VerticalOptions="FillAndExpand" 
+                          HeightRequest="300"
+                         />
+                <oxy:PlotView x:Name="PrecipitationProbabilityHealthPlotView"
+                      Grid.Row="12"
+                      Grid.Column="0"
+                      HorizontalOptions="FillAndExpand"
+                      VerticalOptions="FillAndExpand" 
+                          HeightRequest="100"
+                     />
+
+                <!-- PrecipitationVolume Chart -->
+                <oxy:PlotView x:Name="PrecipitationVolumePlotView" 
+                      Grid.Row="13"
+                      Grid.Column="0" 
+                      HorizontalOptions="FillAndExpand" 
+                      VerticalOptions="FillAndExpand" 
+                          HeightRequest="300"
+                         />
+                <oxy:PlotView x:Name="PrecipitationVolumeHealthPlotView"
+                      Grid.Row="14"
+                      Grid.Column="0"
+                      HorizontalOptions="FillAndExpand"
+                      VerticalOptions="FillAndExpand" 
+                          HeightRequest="100"
+                     />
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
