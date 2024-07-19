@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MeteoHealth.ViewModels;
+using System;
 using System.ComponentModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -10,6 +11,7 @@ namespace MeteoHealth.Views
         public AboutPage()
         {
             InitializeComponent();
+            BindingContext = new AboutViewModel();
         }
     }
 }
