@@ -9,12 +9,12 @@ using Xamarin.Forms.Xaml;
 
 namespace MeteoHealth.Views
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class HomePage : FlyoutPage
-    {
-        public HomePage()
-        {
-            InitializeComponent();
-        }
-    }
+	[XamlCompilation(XamlCompilationOptions.Compile)]
+	public partial class MainFlyoutPage : ContentPage
+	{
+		public MainFlyoutPage ()
+		{
+			InitializeComponent ();
+		}
+	}
 }

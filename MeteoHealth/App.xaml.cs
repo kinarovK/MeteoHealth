@@ -17,6 +17,7 @@ using SQLite_Database_service;
 using SQLite_Database_service.Interfaces;
 using OpenWeatherMap_Api_Service.Models;
 using System.Collections.Generic;
+using MeteoHealth.ViewModels;
 
 namespace MeteoHealth
 {
@@ -48,11 +49,14 @@ namespace MeteoHealth
             serviceCollection.AddSingleton<IConfiguration>(configuration);
             serviceCollection.DependencyRegistrationForApi(configuration);
             serviceCollection.DependencyRegistrationForDB();
+            serviceCollection.AddScoped<IChartMaker, ChartMaker>();
 
+            serviceCollection.AddTransient<MainPageViewModel>();
             serviceCollection.AddTransient<MainPage>();
-            serviceCollection.AddTransient<LoginPage>();
+            serviceCollection.AddTransient<GeolocationPage>();
+            serviceCollection.AddTransient<HealthStatePopupViewModel>();
             //serviceCollection.AddTransient<MeteoHealthFlyoutFlyoutViewModel>();
-
+            
             var s = serviceCollection.BuildServiceProvider();
             ServiceProvider = serviceCollection.BuildServiceProvider();
             var start = s.GetRequiredService<IApiController>();
@@ -70,12 +74,12 @@ namespace MeteoHealth
 
             var f = lists.FirstOrDefault();
             //
-            DependencyService.Register<MockDataStore>();
+            //DependencyService.Register<MockDataStore>();
 
             //MainPage = new MainPage();
 
 
-            MainPage = new NavigationPage(new MainPage(db));
+            MainPage = new NavigationPage(ServiceProvider.GetRequiredService<MainPage>());
 
 
         }

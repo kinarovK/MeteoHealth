@@ -10,11 +10,11 @@ using OxyPlot.Xamarin.Forms;
 
 namespace MeteoHealth.Services
 {
-    internal class ChartMaker
+    internal class ChartMaker : IChartMaker
     {
         private bool isSync;
         private List<PlotModel> plotModels = new List<PlotModel>();
-        internal PlotModel CreateHealthChar(List<HealthStateModel> healthData, PlotView plotview, string yAxisTitle, string dataFieldName)
+        public PlotModel CreateHealthChar(List<HealthStateModel> healthData, string yAxisTitle, string dataFieldName)
         {
             var plotModel = new PlotModel { };
             var lineSeries = new LineSeries
@@ -70,9 +70,9 @@ namespace MeteoHealth.Services
             plotModel.Axes.Add(healthForPressureAxis);
             plotModel.Series.Add(lineSeries);
 
-            plotview.Model = plotModel;
-            plotview.Model.PlotMargins = new OxyThickness(41, 10, 10, 80);
-            plotview.Model.Padding = new OxyThickness(0);
+            //plotview.Model = plotModel;
+            //plotview.Model.PlotMargins = new OxyThickness(41, 10, 10, 80);
+            //plotview.Model.Padding = new OxyThickness(0);
 
 
 
@@ -83,7 +83,7 @@ namespace MeteoHealth.Services
 
 
 
-        internal PlotModel CreateWeatherChart(List<WeatherModel> weatherData, List<HealthStateModel> healthData, PlotView plotview, string yAxisTitle, string dataFieldName)
+        public PlotModel CreateWeatherChart(List<WeatherModel> weatherData, List<HealthStateModel> healthData, string yAxisTitle, string dataFieldName)
         {
             var plotModel = new PlotModel { Title = dataFieldName };
 
@@ -101,24 +101,24 @@ namespace MeteoHealth.Services
             {
                 if (DateTime.TryParse(item.DateTime, out DateTime parsedDateTime))
                 {
-                    switch(dataFieldName)
+                    switch (dataFieldName)
                     {
                         case "Temperature":
                             lineSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(parsedDateTime),
                                 item.Temperature));
-                          
+
                             break;
                         case "Humidity":
                             lineSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(parsedDateTime),
                                 item.Humidity));
-                 
+
                             break;
                         case "Pressure":
-                            lineSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(parsedDateTime), 
+                            lineSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(parsedDateTime),
                                 item.Pressure));
                             break;
                         case "Wind":
-                            lineSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(parsedDateTime), 
+                            lineSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(parsedDateTime),
                                 item.WindSpeed));
                             break;
                         case "PrecipitationProbability":
@@ -134,6 +134,7 @@ namespace MeteoHealth.Services
                             throw new Exception();
                     }
                 }
+                
             }
             var newCol = weatherData.Where(x => DateTime.Parse(x.DateTime) <= parsedLastHealthdata).ToList();
             var minimumDateTemp = (weatherData.Count > 33 ? weatherData[newCol.Count - 33] : weatherData[0]).DateTime;
@@ -179,9 +180,9 @@ namespace MeteoHealth.Services
             plotModel.Series.Add(lineSeries);
 
             // Set the model to plot view
-            plotview.Model = plotModel;
-            plotview.Model.PlotMargins = new OxyThickness(40, 0, 10, 0);
-            plotview.Model.Padding = new OxyThickness(0);
+            //plotview.Model = plotModel;
+            //plotview.Model.PlotMargins = new OxyThickness(40, 0, 10, 0);
+            //plotview.Model.Padding = new OxyThickness(0);
 
             plotModels.Add(plotModel);
             ///dateTimeAxis.AxisChanged += (s, e) => OnAxisChanged(dateTimeAxis, e);
@@ -220,7 +221,7 @@ namespace MeteoHealth.Services
             if (targetAxis != null && targetAxis != sourceAxis)
             {
                 // Detach the existing event handler
-                targetAxis.AxisChanged -= (s, args) => OnAxisChanged(sourceAxis,args, targetPlotModel);
+                targetAxis.AxisChanged -= (s, args) => OnAxisChanged(sourceAxis, args, targetPlotModel);
 
                 // Sync the axis
                 targetAxis.Zoom(sourceAxis.ActualMinimum, sourceAxis.ActualMaximum);

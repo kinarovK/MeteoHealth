@@ -12,12 +12,14 @@
         <Slider x:Name="StateSlider"
                 Maximum="5"
                 Minimum="1"
+                
+                Value="{Binding HealthLevel, Mode=TwoWay}"
                 ValueChanged="StateSlider_ValueChanged"
-                Value="3"
                 
                 />
-        <Label x:Name="SliderValue" FontSize="120"/>
-        <Button x:Name="SetButton" Text="Ok" Clicked="SetButton_Clicked" />
+        <Label x:Name="SliderValue" FontSize="120" Text="{Binding HealthLevel}" />
+        <Button x:Name="SetButton" Text="Ok" Command="{Binding SaveCommand}" />
+       
     </StackLayout>
         
 </xct:Popup>
