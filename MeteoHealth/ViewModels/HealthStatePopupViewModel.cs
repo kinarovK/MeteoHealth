@@ -43,6 +43,7 @@ namespace MeteoHealth.ViewModels
             };
 
             _meteoHealthRepository.SaveHealtStateModel(model);
+            MessagingCenter.Send(this, "ClosePopup");
             
         }
     }

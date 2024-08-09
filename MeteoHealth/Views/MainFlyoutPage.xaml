@@ -1,12 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MeteoHealth.Views.MainFlyoutPage">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
-    </ContentPage.Content>
-</ContentPage>
+<FlyoutPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:MeteoHealth.Views"
+            x:Class="MeteoHealth.Views.MainFlyoutPage">
+    <FlyoutPage.Flyout>
+        <ContentPage Title="Menu">
+            <StackLayout>
+                <Button Text="Home" Clicked="OnHomeClicked" />
+                <Button Text="Geolocation" Clicked="OnGeolocationClicked" />
+                <Button Text="About" Clicked="OnAboutClicked" />
+                <Button Text="Report" Clicked="OnReportClicked"/>
+                <!-- Add Commands? --> 
+            </StackLayout>
+        </ContentPage>
+    </FlyoutPage.Flyout>
+    <FlyoutPage.Detail>
+        <NavigationPage x:Name="detailPage"/>
+    </FlyoutPage.Detail>
+</FlyoutPage>

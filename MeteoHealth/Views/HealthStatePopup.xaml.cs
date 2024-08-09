@@ -15,18 +15,28 @@ namespace MeteoHealth.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class HealthStatePopup : Popup
-    { 
-        
-        public HealthStatePopup(IMeteoHealthRepository repo)
+    {
+
+        public HealthStatePopup(IMeteoHealthRepository repo, string message)
         {
             InitializeComponent();
             BindingContext = new HealthStatePopupViewModel(repo);
+            title.Text = message;
+            MessagingCenter.Subscribe<HealthStatePopupViewModel>(this, "ClosePopup",  (sender) =>
+            {
+                  Dismiss(null);
+            });
+        
         }
         private const double StepValue = 1.0;
+      
         private void StateSlider_ValueChanged(object sender, ValueChangedEventArgs e)
         {
             var newStep = Math.Round(e.NewValue / StepValue);
             StateSlider.Value = newStep * StepValue;
         }
+
+
+
     }
 }

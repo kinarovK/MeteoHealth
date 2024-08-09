@@ -18,6 +18,8 @@ using SQLite_Database_service.Interfaces;
 using OpenWeatherMap_Api_Service.Models;
 using System.Collections.Generic;
 using MeteoHealth.ViewModels;
+using Report_Service;
+using Report_Service.Interfaces;
 
 namespace MeteoHealth
 {
@@ -28,35 +30,11 @@ namespace MeteoHealth
         public App()
         {
             InitializeComponent();
-            //GetSettings
-            //var assembly = Assembly.GetExecutingAssembly();
-            //var resName = assembly.GetManifestResourceNames()?.FirstOrDefault(r => r.EndsWith("settings.json", StringComparison.OrdinalIgnoreCase));
-            //var file = assembly.GetManifestResourceStream(resName);
-            ////dispose
-            //var sr = new StreamReader(file);
-            //var json = sr.ReadToEnd();
-            //var j = JObject.Parse(json);
-            //var apiUrlBase = j.Value<string>("apiUrlBase");
-            //var apiKey = j.Value<string>("apiKey");
-
-            //var som = apiUrlBase + apiKey;
-           
            
             var serviceCollection = new ServiceCollection();
-            var configuration = BuildConfiguration();
-            serviceCollection.Configure<ApplicationOptions>(configuration);
-
-            serviceCollection.AddSingleton<IConfiguration>(configuration);
-            serviceCollection.DependencyRegistrationForApi(configuration);
-            serviceCollection.DependencyRegistrationForDB();
-            serviceCollection.AddScoped<IChartMaker, ChartMaker>();
-
-            serviceCollection.AddTransient<MainPageViewModel>();
-            serviceCollection.AddTransient<MainPage>();
-            serviceCollection.AddTransient<GeolocationPage>();
-            serviceCollection.AddTransient<HealthStatePopupViewModel>();
-            //serviceCollection.AddTransient<MeteoHealthFlyoutFlyoutViewModel>();
-            
+         
+            ConfigureServices(serviceCollection);
+       
             var s = serviceCollection.BuildServiceProvider();
             ServiceProvider = serviceCollection.BuildServiceProvider();
             var start = s.GetRequiredService<IApiController>();
@@ -64,25 +42,48 @@ namespace MeteoHealth
             
 
             var db = s.GetRequiredService<IMeteoHealthRepository>();
-            var result = start.ExecuteApiRequest("48.124", "22.15566");
+            //var result = start.ExecuteApiRequest("48.124", "22.15566");
+            var chart = s.GetRequiredService<IChartMaker>();
+            var reportMaker = s.GetRequiredService<IReportMaker>();
+            //var result2 = result.Result;
+            //db.UpsertWeatherModelAsync(ConvertToModel(result.Result));
+                //db.SaveWeatherModelAsync(ConvertToModel(result.Result));
+                //db.UpdateWeatherModelAsync(ConvertToModel(result.Result));
+            //var lists = db.GetWeatherModelAsync().Result;
 
-            var result2 = result.Result;
-            db.UpsertWeatherModelAsync(ConvertToModel(result.Result));
-            //db.SaveWeatherModelAsync(ConvertToModel(result.Result));
-            //db.UpdateWeatherModelAsync(ConvertToModel(result.Result));
-            var lists = db.GetWeatherModelAsync().Result;
-
-            var f = lists.FirstOrDefault();
+            //var f = lists.FirstOrDefault();
             //
             //DependencyService.Register<MockDataStore>();
 
             //MainPage = new MainPage();
 
 
-            MainPage = new NavigationPage(ServiceProvider.GetRequiredService<MainPage>());
+            //MainPage = new NavigationPage(ServiceProvider.GetRequiredService<MainPage>());
 
-
+            MainPage = new NavigationPage(new MainFlyoutPage(db, chart, reportMaker));
         }
+        public void ConfigureServices(IServiceCollection services)
+        {
+            var configuration = BuildConfiguration();
+            services.Configure<ApplicationOptions>(configuration);
+            services.AddSingleton<IConfiguration>(configuration);
+            services.DependencyRegistrationForApi(configuration);
+            services.DependencyRegistrationForDB();
+            services.AddScoped<IChartMaker, ChartMaker>();
+            services.AddScoped<IReminderService, ReminderService>();
+            services.DependencyRegistrationForReport();
+            services.AddTransient<MainPageViewModel>();
+            services.AddTransient<MainPage>();
+            services.AddTransient<GeolocationPage>();
+            services.AddTransient<HealthStatePopupViewModel>();
+            services.AddTransient<ReportPageViewModel>();
+            services.AddTransient<ReportPage>();
+            services.AddSingleton<INotificationService>(provider =>
+                {
+                return DependencyService.Get<INotificationService>();
+                });
+        }
+
 
         private List<WeatherModel> ConvertToModel(WeatherApiResponse response)
         {
@@ -125,6 +126,8 @@ namespace MeteoHealth
         }
         protected override void OnStart()
         {
+            var reminder = ServiceProvider.GetRequiredService<IReminderService>();
+            reminder.ScheduleDailyReminder(13, 32);
         }
 
         protected override void OnSleep()

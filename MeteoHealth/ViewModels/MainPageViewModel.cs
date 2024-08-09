@@ -7,6 +7,7 @@ using SQLite_Database_service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -157,6 +158,7 @@ namespace MeteoHealth.ViewModels
             ShowhealthPopupCommand = new Command(ShowHealthPopup);
             ShowAboutPageCommand = new Command(ShowAboutPage);
             ShowGeolocationCommand = new Command(ShowGeoLocationPage);
+            OnApperering();
             InitializeChartsAsync();
         }
 
@@ -244,16 +246,61 @@ namespace MeteoHealth.ViewModels
             return healthState;
 
         }
+        private async void OnApperering()
+        {
+            CheckHealthState();
+            var geolocation = _meteoHealthRepository.GetGeolocationModelsAsync().Result;
 
+            if (geolocation.Count == 0)
+            {
+                await Application.Current.MainPage.DisplayAlert("Ooops", "Not found geolocation, please set it", "OK");
+                await Application.Current.MainPage.Navigation.PushAsync(new GeolocationPage(_meteoHealthRepository));
+            }
+            var weather = _meteoHealthRepository.GetWeatherModelAsync().Result;
+            var some = weather;
+
+        }
         public ICommand ShowhealthPopupCommand { get; }
         private void ShowHealthPopup()
         {
-            var popup = new HealthStatePopup(_meteoHealthRepository);
+            var popup = new HealthStatePopup(_meteoHealthRepository, "Hi");
             Application.Current.MainPage.Navigation.ShowPopup(popup);
         }
 
         public ICommand ShowAboutPageCommand { get; }
         
+        internal async void CheckHealthState()
+        {
+            
+           var healthStates = await _meteoHealthRepository.GetHealthStatesAsync();
+            if (healthStates.Count == 0)
+            {
+                await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, "How do u feel today?"));
+                return;
+            }
+            var todayDate = DateTime.Today;
+            var today = healthStates.FirstOrDefault(x => x.Date == todayDate.ToString());
+            DateTime.TryParse(healthStates.FirstOrDefault().Date, out var firstDateInDb);
+            if (today is null)
+            {
+                await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, "How do u feel today?"));
+            }
+            bool isRecordExists = false;
+            while (!isRecordExists)
+            {
+                todayDate =  todayDate.AddDays(-1);
+                if (healthStates.FirstOrDefault(x=> x.Date == todayDate.ToString()) is null || todayDate > firstDateInDb)
+                {
+                    var date = todayDate.ToString("MM.dd");
+                    await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, $"Oops its look like in {todayDate.ToString("MM.dd")} you not checked stete,  How was your state in this day?"));
+                }
+                else
+                {
+                    isRecordExists = true;
+                }
+                
+            }
+        }
         private async void ShowAboutPage()
         {
 
