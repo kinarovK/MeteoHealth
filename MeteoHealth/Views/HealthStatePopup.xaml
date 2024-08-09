@@ -8,7 +8,7 @@
            >
 
     <StackLayout>
-        <Label Text="How are you today?" />
+        <Label x:Name="title" />
         <Slider x:Name="StateSlider"
                 Maximum="5"
                 Minimum="1"

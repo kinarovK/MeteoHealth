@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeteoHealth.iOS", "MeteoHea
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeteoHealth", "MeteoHealth\MeteoHealth.csproj", "{38F91366-7525-4A97-9796-172B6CEADCAA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenWeatherMap_ApiHandler_Service", "..\OpenWeatherMap_ApiHandler\OpenWeatherMap_ApiHandler_Service.csproj", "{9CE25EEC-B5B1-4FB6-8CB4-4E8732937C85}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Report_Service", "..\Report_Service\Report_Service.csproj", "{81C201B0-433B-45E2-86F1-C172CD84FC79}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenWeatherMap_Api_Service", "OpenWeatherMap_Api_Service\OpenWeatherMap_Api_Service.csproj", "{E983AD42-00EE-4DC8-945C-D86B28A1BB2C}"
@@ -83,18 +81,6 @@ Global
 		{38F91366-7525-4A97-9796-172B6CEADCAA}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{38F91366-7525-4A97-9796-172B6CEADCAA}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{38F91366-7525-4A97-9796-172B6CEADCAA}.Release|iPhoneSimulator.Deploy.0 = Release|Any CPU
-		{9CE25EEC-B5B1-4FB6-8CB4-4E8732937C85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9CE25EEC-B5B1-4FB6-8CB4-4E8732937C85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9CE25EEC-B5B1-4FB6-8CB4-4E8732937C85}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{9CE25EEC-B5B1-4FB6-8CB4-4E8732937C85}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{9CE25EEC-B5B1-4FB6-8CB4-4E8732937C85}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{9CE25EEC-B5B1-4FB6-8CB4-4E8732937C85}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{9CE25EEC-B5B1-4FB6-8CB4-4E8732937C85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9CE25EEC-B5B1-4FB6-8CB4-4E8732937C85}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9CE25EEC-B5B1-4FB6-8CB4-4E8732937C85}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{9CE25EEC-B5B1-4FB6-8CB4-4E8732937C85}.Release|iPhone.Build.0 = Release|Any CPU
-		{9CE25EEC-B5B1-4FB6-8CB4-4E8732937C85}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{9CE25EEC-B5B1-4FB6-8CB4-4E8732937C85}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{81C201B0-433B-45E2-86F1-C172CD84FC79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{81C201B0-433B-45E2-86F1-C172CD84FC79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81C201B0-433B-45E2-86F1-C172CD84FC79}.Debug|iPhone.ActiveCfg = Debug|Any CPU
