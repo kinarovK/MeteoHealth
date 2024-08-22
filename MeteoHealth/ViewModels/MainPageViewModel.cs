@@ -1,5 +1,8 @@
-﻿using MeteoHealth.Services;
+﻿using MeteoHealth.Exceptions;
+using MeteoHealth.Services;
 using MeteoHealth.Views;
+using OpenWeatherMap_Api_Service.Interfaces;
+using OpenWeatherMap_Api_Service.Models;
 using OxyPlot;
 //using OxyPlot.Xamarin.Forms;
 using SQLite_Database_service;
@@ -7,6 +10,7 @@ using SQLite_Database_service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -23,6 +27,8 @@ namespace MeteoHealth.ViewModels
 
         private readonly IMeteoHealthRepository _meteoHealthRepository;
         private readonly IChartMaker chartmaker;
+        private readonly IApiController apiController;
+        private readonly IWeatherApiService apiService;
 
         //Temperature
         private PlotModel _temperaturePlotModel;
@@ -151,28 +157,63 @@ namespace MeteoHealth.ViewModels
             }
         }
         //CTOR
-        public MainPageViewModel(IMeteoHealthRepository meteoHealthRepository, IChartMaker chartMaker)
+        public MainPageViewModel(IMeteoHealthRepository meteoHealthRepository, IChartMaker chartMaker, IApiController apiController, IWeatherApiService apiService)
         {
             _meteoHealthRepository = meteoHealthRepository;
             this.chartmaker = chartMaker;
+            this.apiController = apiController;
+            this.apiService = apiService;
             ShowhealthPopupCommand = new Command(ShowHealthPopup);
-            ShowAboutPageCommand = new Command(ShowAboutPage);
-            ShowGeolocationCommand = new Command(ShowGeoLocationPage);
-            OnApperering();
-            InitializeChartsAsync();
+            ShowAboutPageCommand = new Command(async () => await ShowAboutPage());  //async () => await GetReportDetails()
+            ShowGeolocationCommand = new Command(async () => await ShowGeoLocationPage());
+            //OnApperering();
+            //InitializeChartsAsync();
+        }
+        private string notEnoughDataLabel;
+
+        public string NotEnoughDataLabel
+        {
+            get { return notEnoughDataLabel;}
+            set
+            {
+                if (notEnoughDataLabel != value)
+                {
+                    notEnoughDataLabel= value;
+                    OnPropertyChanged(nameof(NotEnoughDataLabel));
+                }
+ 
+            }
         }
 
-        public void InitializeChartsAsync()
+        internal async Task InitializeAsync()
         {
-            //var weatherData = await _meteoHealthRepository.GetWeatherModelAsync();
-            //var healthState = await _meteoHealthRepository.GetHealthStatesAsync();
+            await OnApperering();
+            await InitializeChartsAsync();
+        }
+        public async Task InitializeChartsAsync()
+        {
+            var weatherData = await _meteoHealthRepository.GetWeatherModelAsync(); //Make it asnyc 
+            var healthState = await _meteoHealthRepository.GetHealthStatesAsync(); 
 
-            var weatherData = CreateMockWeatherModels();
-            var healthState = CreateHealthModelMock();
+
+
+            //var weatherData = CreateMockWeatherModels();
+            //var healthState = CreateHealthModelMock();
+            //if (weatherData.Count == 0 ||healthState.Count < 2)
+            //{
+            //    NotEnoughDataLabel = "Here will be appears the charts when be enought data";
+            //    return;
+            //}
 
             TemperaturePlotModel = chartmaker.CreateWeatherChart(weatherData, healthState, "Temperature", "Temperature");
             HealthTemperaturePlotModel = chartmaker.CreateHealthChar(healthState, "HealthState", "temp");
-            chartmaker.InitializeCharts(TemperaturePlotModel, HealthTemperaturePlotModel);
+
+            //if (TemperaturePlotModel == null || HealthHumidityPlotModel == null)
+            //{
+            //    throw new NotEnoughDataForChartException();
+            //    return;
+            //}
+            chartmaker.InitializeCharts(TemperaturePlotModel, HealthTemperaturePlotModel); //null exception here 
 
             PressurePlotModel = chartmaker.CreateWeatherChart(weatherData, healthState, "Pressure", "Pressure");
             HealthPressurePlotModel = chartmaker.CreateHealthChar(healthState, "HealthState", "press");
@@ -246,68 +287,108 @@ namespace MeteoHealth.ViewModels
             return healthState;
 
         }
-        private async void OnApperering()
+        public async Task OnApperering()
         {
-            CheckHealthState();
-            var geolocation = _meteoHealthRepository.GetGeolocationModelsAsync().Result;
+
+            try
+            {
+                await CheckHealthState();
+                await CheckGeolocation();
+                await CheckWeather();
+                //var geolocation = new List<string>(); //await _meteoHealthRepository.GetGeolocationModelsAsync();
+
+                //var weather = _meteoHealthRepository.GetWeatherModelAsync().Result;
+                //var some = weather;
+
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            await InitializeChartsAsync();
+
+
+        }
+        internal async Task CheckGeolocation()
+        {
+            var geolocation = await _meteoHealthRepository.GetGeolocationModelsAsync();
 
             if (geolocation.Count == 0)
             {
+                //ShowHealthPopup();
                 await Application.Current.MainPage.DisplayAlert("Ooops", "Not found geolocation, please set it", "OK");
                 await Application.Current.MainPage.Navigation.PushAsync(new GeolocationPage(_meteoHealthRepository));
             }
-            var weather = _meteoHealthRepository.GetWeatherModelAsync().Result;
-            var some = weather;
+        }
+        internal async Task CheckWeather()
+        {
+
+            var weathers = await _meteoHealthRepository.GetWeatherModelAsync(); //or maybe get last 
+            if (weathers.Count == 0 || DateTime.Parse(weathers.LastOrDefault().RequestData) != DateTime.Today)
+            {
+                var geolocation = await _meteoHealthRepository.GetGeolocationModelsAsync(); //get just last
+                var apiResult = await apiController.ExecuteApiRequest(geolocation.LastOrDefault().Latitude.ToString(), geolocation.LastOrDefault().Longitude.ToString());
+                await _meteoHealthRepository.UpsertWeatherModelAsync(apiService.ConvertToModel(apiResult));
+
+            }
+
+
+
+
 
         }
         public ICommand ShowhealthPopupCommand { get; }
         private void ShowHealthPopup()
         {
-            var popup = new HealthStatePopup(_meteoHealthRepository, "Hi");
+            var popup = new HealthStatePopup(_meteoHealthRepository, "Hi", DateTime.Today);
             Application.Current.MainPage.Navigation.ShowPopup(popup);
         }
-
+     
         public ICommand ShowAboutPageCommand { get; }
         
-        internal async void CheckHealthState()
+        internal async Task CheckHealthState()//
         {
             
-           var healthStates = await _meteoHealthRepository.GetHealthStatesAsync();
+            var healthStates =  await _meteoHealthRepository.GetHealthStatesAsync();
+            var healthStateDate = DateTime.Today;
+
             if (healthStates.Count == 0)
             {
-                await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, "How do u feel today?"));
+                await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, "How do u feel today?", healthStateDate));
                 return;
             }
-            var todayDate = DateTime.Today;
-            var today = healthStates.FirstOrDefault(x => x.Date == todayDate.ToString());
+            var today = healthStates.FirstOrDefault(x => x.Date == healthStateDate.ToString());
             DateTime.TryParse(healthStates.FirstOrDefault().Date, out var firstDateInDb);
             if (today is null)
             {
-                await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, "How do u feel today?"));
+                await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, "How do u feel today?", healthStateDate));
             }
             bool isRecordExists = false;
             while (!isRecordExists)
             {
-                todayDate =  todayDate.AddDays(-1);
-                if (healthStates.FirstOrDefault(x=> x.Date == todayDate.ToString()) is null || todayDate > firstDateInDb)
+                healthStateDate = healthStateDate.AddDays(-1);
+                if (healthStates.FirstOrDefault(x => x.Date == healthStateDate.ToString()) is null && healthStateDate > firstDateInDb)
                 {
-                    var date = todayDate.ToString("MM.dd");
-                    await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, $"Oops its look like in {todayDate.ToString("MM.dd")} you not checked stete,  How was your state in this day?"));
+                    var date = healthStateDate.ToString("MM.dd");
+                    await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, $"Oops its look like in " +
+                        $"{healthStateDate.ToString("MM.dd")} you not checked stete,  How was your state in this day?", healthStateDate));
                 }
                 else
                 {
                     isRecordExists = true;
                 }
-                
+
             }
         }
-        private async void ShowAboutPage()
+        private async Task ShowAboutPage()
         {
 
             await Application.Current.MainPage.Navigation.PushAsync(new AboutPage());
         }
         public ICommand ShowGeolocationCommand { get; }
-        private async void ShowGeoLocationPage()
+        private async Task ShowGeoLocationPage()
         {
             await Application.Current.MainPage.Navigation.PushAsync(new GeolocationPage(_meteoHealthRepository));
         }

@@ -31,13 +31,14 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-              
-                <Label Text="Temperature Data" 
+
+                <Label Text="{Binding NotEnoughDataLabel}" 
                Grid.Row="0"
                        Grid.Column="0"
                HorizontalOptions="Center" 
                FontSize="Large"
                Margin="0,20,0,10" />
+
                 <!-- Temp Chart -->
                 <oxy:PlotView x:Name="TemperaturePlotView" 
                               Model="{Binding TemperaturePlotModel, Mode=TwoWay}" 
@@ -148,9 +149,8 @@
 
 
                 <!-- Wind Chart -->
-                <Button x:Name="AboutCall" Text="About" > </Button>
+                
                 <!--<Button Text="Show Popup" Command="{Binding ShowhealthPopupCommand}"/>-->
-                <Button Text="Show About page" Command="{Binding ShowGeolocationCommand}"/>
                 <!-- PrecipitationProbability Chart -->
            
 

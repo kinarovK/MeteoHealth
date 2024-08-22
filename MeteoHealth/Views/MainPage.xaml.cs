@@ -23,6 +23,7 @@ using GeoLocation_Service;
 using Xamarin.Essentials;
 using Microsoft.Extensions.DependencyInjection;
 using MeteoHealth.ViewModels;
+using OpenWeatherMap_Api_Service.Interfaces;
 
 namespace MeteoHealth.Views
 {
@@ -53,75 +54,157 @@ namespace MeteoHealth.Views
 
         //public MainPage()
         //{
-            
+
         //}
-        public MainPage(IMeteoHealthRepository repo, IChartMaker chartMaker)
+        private MainPageViewModel viewModel;
+        public MainPage(IMeteoHealthRepository repo, IChartMaker chartMaker, IApiController apiController, IWeatherApiService apiService)
         {
             InitializeComponent();
 
+
+            //var oxyThicknessForWeatherCharts = new OxyThickness(40, 0, 10, 0);
+            //var oxyThicknessForHealth = new OxyThickness(41, 10, 10, 80);
+            //var defaultOxyThickness = new OxyThickness(0);
+            viewModel = new MainPageViewModel(repo, chartMaker, apiController, apiService);
+            BindingContext = viewModel;
+            //BindingContext = new MainPageViewModel(repo, chartMaker);
+            //viewModel.TemperaturePlotView = plotModel;
+
+
+            //TemperaturePlotView.Model = viewModel.TemperaturePlotModel;
+            //TemperaturePlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
+            //TemperaturePlotView.Model.Padding = defaultOxyThickness;
+
+            //HealthTemperaturePlotView.Model = viewModel.HealthTemperaturePlotModel;
+            //HealthTemperaturePlotView.Model.PlotMargins = oxyThicknessForHealth;
+            //HealthTemperaturePlotView.Model.Padding = defaultOxyThickness;
+
+
+            ////
+            //PressurePlotView.Model = viewModel.PressurePlotModel;
+            //PressurePlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
+            //PressurePlotView.Model.Padding = defaultOxyThickness;
+
+            //PressureHealthPlotView.Model = viewModel.HealthPressurePlotModel;
+            //PressureHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
+            //PressureHealthPlotView.Model.Padding = defaultOxyThickness;
+
+            ////
+            //HumidityPlotView.Model = viewModel.HumidityPlotModel;
+            //HumidityPlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
+            //HumidityPlotView.Model.Padding = defaultOxyThickness;
+
+            //HumidityHealthPlotView.Model = viewModel.HealthHumidityPlotModel;
+            //HumidityHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
+            //HumidityHealthPlotView.Model.Padding = defaultOxyThickness;
+
+            ////
+            //WindPlotView.Model = viewModel.WindPlotModel;
+            //WindPlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
+            //WindPlotView.Model.Padding = defaultOxyThickness;
+
+            //WindHealthPlotView.Model = viewModel.HealthWindPlotModel;
+            //WindHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
+            //WindHealthPlotView.Model.Padding = defaultOxyThickness;
+            ////
+            //PrecipitationProbabilityPlotView.Model = viewModel.PrecipitationProbPlotModel;
+            //PrecipitationProbabilityPlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
+            //PrecipitationProbabilityPlotView.Model.Padding = defaultOxyThickness;
+
+            //PrecipitationProbabilityHealthPlotView.Model = viewModel.HealthPrecipitationProbPlotModel;
+            //PrecipitationProbabilityHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
+            //PrecipitationProbabilityHealthPlotView.Model.Padding = defaultOxyThickness;
+
+            ////
+
+            //PrecipitationVolumePlotView.Model = viewModel.PrecipitationVolPlotModel;
+            //PrecipitationVolumePlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
+            //PrecipitationVolumePlotView.Model.Padding = defaultOxyThickness;
+
+            //PrecipitationVolumeHealthPlotView.Model = viewModel.HealthPrecipitationVolPlotModel;
+            //PrecipitationVolumeHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
+            //PrecipitationVolumeHealthPlotView.Model.Padding = defaultOxyThickness;
+            //this.repo = repo;
+
+        }
+
+        
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            //var viewModel = BindingContext as MainPageViewModel;
+            //if (viewModel != null)
+            //{
+            //    await viewModel.InitializeAsync();
+            //}
+            //
             var oxyThicknessForWeatherCharts = new OxyThickness(40, 0, 10, 0);
             var oxyThicknessForHealth = new OxyThickness(41, 10, 10, 80);
             var defaultOxyThickness = new OxyThickness(0);
-            var viewModel = new MainPageViewModel(repo, chartMaker);
-            //BindingContext = new MainPageViewModel(repo, chartMaker);
-            //viewModel.TemperaturePlotView = plotModel;
-            TemperaturePlotView.Model = viewModel.TemperaturePlotModel;
-            TemperaturePlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
-            TemperaturePlotView.Model.Padding = defaultOxyThickness;
+            await viewModel.InitializeAsync();
 
-            HealthTemperaturePlotView.Model = viewModel.HealthTemperaturePlotModel;
-            HealthTemperaturePlotView.Model.PlotMargins = oxyThicknessForHealth;
-            HealthTemperaturePlotView.Model.Padding = defaultOxyThickness;
+            try
+            {
+                TemperaturePlotView.Model = viewModel.TemperaturePlotModel;
+                TemperaturePlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
+                TemperaturePlotView.Model.Padding = defaultOxyThickness;
+
+                HealthTemperaturePlotView.Model = viewModel.HealthTemperaturePlotModel;
+                HealthTemperaturePlotView.Model.PlotMargins = oxyThicknessForHealth;
+                HealthTemperaturePlotView.Model.Padding = defaultOxyThickness;
 
 
-            //
-            PressurePlotView.Model = viewModel.PressurePlotModel;
-            PressurePlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
-            PressurePlotView.Model.Padding = defaultOxyThickness;
+                //
+                PressurePlotView.Model = viewModel.PressurePlotModel;
+                PressurePlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
+                PressurePlotView.Model.Padding = defaultOxyThickness;
 
-            PressureHealthPlotView.Model = viewModel.HealthPressurePlotModel;
-            PressureHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
-            PressureHealthPlotView.Model.Padding = defaultOxyThickness;
+                PressureHealthPlotView.Model = viewModel.HealthPressurePlotModel;
+                PressureHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
+                PressureHealthPlotView.Model.Padding = defaultOxyThickness;
 
-            //
-            HumidityPlotView.Model = viewModel.HumidityPlotModel;
-            HumidityPlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
-            HumidityPlotView.Model.Padding = defaultOxyThickness;
+                //
+                HumidityPlotView.Model = viewModel.HumidityPlotModel;
+                HumidityPlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
+                HumidityPlotView.Model.Padding = defaultOxyThickness;
 
-            HumidityHealthPlotView.Model = viewModel.HealthHumidityPlotModel;
-            HumidityHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
-            HumidityHealthPlotView.Model.Padding = defaultOxyThickness;
+                HumidityHealthPlotView.Model = viewModel.HealthHumidityPlotModel;
+                HumidityHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
+                HumidityHealthPlotView.Model.Padding = defaultOxyThickness;
 
-            //
-            WindPlotView.Model = viewModel.WindPlotModel;
-            WindPlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
-            WindPlotView.Model.Padding = defaultOxyThickness;
+                //
+                WindPlotView.Model = viewModel.WindPlotModel;
+                WindPlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
+                WindPlotView.Model.Padding = defaultOxyThickness;
 
-            WindHealthPlotView.Model = viewModel.HealthWindPlotModel;
-            WindHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
-            WindHealthPlotView.Model.Padding = defaultOxyThickness;
-            //
-            PrecipitationProbabilityPlotView.Model = viewModel.PrecipitationProbPlotModel;
-            PrecipitationProbabilityPlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
-            PrecipitationProbabilityPlotView.Model.Padding = defaultOxyThickness;
+                WindHealthPlotView.Model = viewModel.HealthWindPlotModel;
+                WindHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
+                WindHealthPlotView.Model.Padding = defaultOxyThickness;
+                //
+                PrecipitationProbabilityPlotView.Model = viewModel.PrecipitationProbPlotModel;
+                PrecipitationProbabilityPlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
+                PrecipitationProbabilityPlotView.Model.Padding = defaultOxyThickness;
 
-            PrecipitationProbabilityHealthPlotView.Model = viewModel.HealthPrecipitationProbPlotModel;
-            PrecipitationProbabilityHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
-            PrecipitationProbabilityHealthPlotView.Model.Padding = defaultOxyThickness;
+                PrecipitationProbabilityHealthPlotView.Model = viewModel.HealthPrecipitationProbPlotModel;
+                PrecipitationProbabilityHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
+                PrecipitationProbabilityHealthPlotView.Model.Padding = defaultOxyThickness;
 
-            //
+                //
 
-            PrecipitationVolumePlotView.Model = viewModel.PrecipitationVolPlotModel;
-            PrecipitationVolumePlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
-            PrecipitationVolumePlotView.Model.Padding = defaultOxyThickness;
+                PrecipitationVolumePlotView.Model = viewModel.PrecipitationVolPlotModel;
+                PrecipitationVolumePlotView.Model.PlotMargins = oxyThicknessForWeatherCharts;
+                PrecipitationVolumePlotView.Model.Padding = defaultOxyThickness;
 
-            PrecipitationVolumeHealthPlotView.Model = viewModel.HealthPrecipitationVolPlotModel;
-            PrecipitationVolumeHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
-            PrecipitationVolumeHealthPlotView.Model.Padding = defaultOxyThickness;
-            this.repo = repo;
-     
+                PrecipitationVolumeHealthPlotView.Model = viewModel.HealthPrecipitationVolPlotModel;
+                PrecipitationVolumeHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
+                PrecipitationVolumeHealthPlotView.Model.Padding = defaultOxyThickness;
+            }
+            catch (Exception ex)
+            {
+
+                return;
+            }
+           
         }
-
-
     }
 }

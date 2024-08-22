@@ -22,9 +22,9 @@ namespace SQLite_Database_service
             return _context.GetWeatherModelsAsync();
         }
 
-        public Task<List<HealthStateModel>> GetHealthStatesAsync()
+        public async Task<List<HealthStateModel>> GetHealthStatesAsync()
         {
-            return _context.GetHealthStatesAsync();
+            return await _context.GetHealthStatesAsync();
         }
         public Task<int> SaveWeatherModelAsync(List<WeatherModel> model)
         {
@@ -55,6 +55,19 @@ namespace SQLite_Database_service
         public async Task<int> SaveGeolocationModelAsync(GeolocationModel model)
         {
             return await _context.SaveGeolocationModelAsync(model);
+        }
+
+        public async Task<int> DeleteWeatherModelsAsync()
+        {
+            return await _context.ClearWeatherModelAsync();
+        }
+        public async Task<int> DeleteHealthStateModelsAsync()
+        {
+            return await _context.ClearHealthStateModelAsync();
+        }
+        public async Task<int> DeleteGeolocationAsync()
+        {
+            return await _context.ClearGeolocationModelAsync();
         }
     }
 }

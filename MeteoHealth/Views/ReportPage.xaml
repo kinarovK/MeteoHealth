@@ -8,10 +8,56 @@
                 
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <Button Text="Delete all data" BackgroundColor="Red" TextColor="Wheat" Command="{Binding DeleteAllDataCommand}"/>
+            <ImageButton Source="Info_icon.png"
+                         WidthRequest="30"
+                         HeightRequest="30"
+                         BackgroundColor="Transparent"
+                         Command="{Binding OpenAboutReportPageCommand}"/>
             <Button Text="Create report" Command="{Binding GetReportCommand}"/>
+
+            <Label Text="{Binding ReportPeriod}"/>
+            <Label Text="Potentional Relationship with: " IsVisible="{Binding PotentionalRelationshipLabelIsVisible}"/>
+            <ListView ItemsSource="{Binding PotentialRelationsList}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="viewmodels:ResultModel">
+                        <TextCell TextColor="Black" Text="{Binding Name}"/>
+                    </DataTemplate> 
+                </ListView.ItemTemplate>
+            </ListView>
+            <Label Text="Possible Relationship with: " IsVisible="{Binding PossibleRelationshipLabelIsVisible}"/>
+            <ListView ItemsSource="{Binding PossibleRelationsList}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="viewmodels:ResultModel">
+                        <TextCell TextColor="Black" Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Button Text="Get Report details" Command="{Binding GetReportDetailsCommand}" IsVisible="{Binding IsGetDetailReportButtonVisible}" />
+            <Label Text="{Binding ReportPeriod}"/>
+            <ListView ItemsSource="{Binding DetailedReportList}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="viewmodels:ResultModel">
+                        <ViewCell>
+                            <Grid Padding="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Text="{Binding Name}"
+                                       FontSize="Medium"
+                                       VerticalOptions="Center"
+                                       Grid.Column="0"/>
+                                <Label Text="{Binding Value, StringFormat='{0:F2}'}"
+                                       FontSize="Medium"
+                                       VerticalOptions="Center"
+                                       Grid.Column="1"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

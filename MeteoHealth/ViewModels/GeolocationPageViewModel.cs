@@ -1,4 +1,6 @@
-﻿using SQLite_Database_service;
+﻿using MeteoHealth.Services;
+using MeteoHealth.Views;
+using SQLite_Database_service;
 using SQLite_Database_service.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -74,6 +76,7 @@ namespace MeteoHealth.ViewModels
                         Longitude = result.Longitude
                     });
                 }
+
             }
             catch (Exception ex)
             {
@@ -102,6 +105,8 @@ namespace MeteoHealth.ViewModels
             {
                 GeoLabel = $"Lat: {position.Latitude}, Long: {position.Longitude}";
                 await Application.Current.MainPage.DisplayAlert("Coordinates", GeoLabel, "OK");
+
+
             }
             catch (FeatureNotEnabledException)
             {
@@ -135,6 +140,7 @@ namespace MeteoHealth.ViewModels
                     });
 
                     await Application.Current.MainPage.DisplayAlert("Success", "Location successfully saved.", "OK");
+
                 }
             }
             catch (FeatureNotEnabledException)

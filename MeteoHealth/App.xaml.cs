@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using MeteoHealth.ViewModels;
 using Report_Service;
 using Report_Service.Interfaces;
+using System.Buffers;
 
 namespace MeteoHealth
 {
@@ -42,13 +43,15 @@ namespace MeteoHealth
             
 
             var db = s.GetRequiredService<IMeteoHealthRepository>();
+            var weatherApi = s.GetRequiredService<IApiController>();
             //var result = start.ExecuteApiRequest("48.124", "22.15566");
             var chart = s.GetRequiredService<IChartMaker>();
             var reportMaker = s.GetRequiredService<IReportMaker>();
+            var apiService = s.GetRequiredService<IWeatherApiService>();
             //var result2 = result.Result;
             //db.UpsertWeatherModelAsync(ConvertToModel(result.Result));
-                //db.SaveWeatherModelAsync(ConvertToModel(result.Result));
-                //db.UpdateWeatherModelAsync(ConvertToModel(result.Result));
+            //db.SaveWeatherModelAsync(ConvertToModel(result.Result));
+            //db.UpdateWeatherModelAsync(ConvertToModel(result.Result));
             //var lists = db.GetWeatherModelAsync().Result;
 
             //var f = lists.FirstOrDefault();
@@ -56,11 +59,16 @@ namespace MeteoHealth
             //DependencyService.Register<MockDataStore>();
 
             //MainPage = new MainPage();
-
-
+            //db.DeleteGeolocationAsync();
+            //db.DeleteHealthStateModelsAsync();
+            db.DeleteWeatherModelsAsync();
             //MainPage = new NavigationPage(ServiceProvider.GetRequiredService<MainPage>());
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                Application.Current.MainPage = new NavigationPage(new MainFlyoutPage(db, chart, reportMaker, weatherApi, apiService));
 
-            MainPage = new NavigationPage(new MainFlyoutPage(db, chart, reportMaker));
+            });
+
         }
         public void ConfigureServices(IServiceCollection services)
         {
@@ -71,6 +79,7 @@ namespace MeteoHealth
             services.DependencyRegistrationForDB();
             services.AddScoped<IChartMaker, ChartMaker>();
             services.AddScoped<IReminderService, ReminderService>();
+            services.AddScoped<IWeatherApiService, WeatherApiService>();
             services.DependencyRegistrationForReport();
             services.AddTransient<MainPageViewModel>();
             services.AddTransient<MainPage>();
@@ -126,9 +135,21 @@ namespace MeteoHealth
         }
         protected override void OnStart()
         {
+            var weatherApi = ServiceProvider.GetRequiredService<IApiController>();
+            //weatherApi.ExecuteApiRequest();
             var reminder = ServiceProvider.GetRequiredService<IReminderService>();
-            reminder.ScheduleDailyReminder(13, 32);
-        }
+            //reminder.ScheduleDailyReminder(13, 32);
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                var db = ServiceProvider.GetRequiredService<IMeteoHealthRepository>();
+                var chart = ServiceProvider.GetRequiredService<IChartMaker>();
+                var reportMaker = ServiceProvider.GetRequiredService<IReportMaker>();
+                var apiService = ServiceProvider.GetRequiredService<IWeatherApiService>();
+                Application.Current.MainPage = new NavigationPage(new MainFlyoutPage(db, chart, reportMaker, weatherApi, apiService));
+            });
+        
+    }
 
         protected override void OnSleep()
         {
