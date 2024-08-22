@@ -17,13 +17,14 @@ namespace MeteoHealth.Views
     public partial class HealthStatePopup : Popup
     {
 
-        public HealthStatePopup(IMeteoHealthRepository repo, string message)
+        public HealthStatePopup(IMeteoHealthRepository repo, string message, DateTime date)
         {
             InitializeComponent();
-            BindingContext = new HealthStatePopupViewModel(repo);
+            BindingContext = new HealthStatePopupViewModel(repo, date);
             title.Text = message;
             MessagingCenter.Subscribe<HealthStatePopupViewModel>(this, "ClosePopup",  (sender) =>
             {
+                  
                   Dismiss(null);
             });
         

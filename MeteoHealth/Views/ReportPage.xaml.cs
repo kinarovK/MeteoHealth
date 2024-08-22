@@ -22,7 +22,8 @@ namespace MeteoHealth.Views
         {
             InitializeComponent();
             this.repo = repo;
-            var viewModel = new ReportPageViewModel(repo, reportMaker);
+            BindingContext = new ReportPageViewModel(repo, reportMaker);
+            
         }
     }
 }

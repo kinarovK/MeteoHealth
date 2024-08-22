@@ -17,10 +17,16 @@ namespace SQLite_Database_service.Interfaces
         public Task<int> UpdateWeatherModelAsync(List<WeatherModel> model);
         public Task<int> UpsertWeatherModelAsync(List<WeatherModel> models);
         public Task<int> SaveGeolocationModelAsync(GeolocationModel model);
-
         public  Task<List<GeolocationModel>> GetGeolocationModelsAsync();
 
+        public Task<int> DeleteWeatherModelsAsync();
 
+
+        public Task<int> DeleteHealthStateModelsAsync();
+
+
+        public Task<int> DeleteGeolocationAsync();
+      
 
     }
 }

@@ -11,6 +11,7 @@ namespace MeteoHealth.ViewModels
     internal class HealthStatePopupViewModel : BaseViewModel
     {
         private double _healthLevel;
+        private readonly DateTime date;
 
         private readonly IMeteoHealthRepository _meteoHealthRepository;
 
@@ -27,9 +28,10 @@ namespace MeteoHealth.ViewModels
                 OnPropertyChanged();
             } 
         }
-        public HealthStatePopupViewModel(IMeteoHealthRepository meteoHealthRepository)
+        public HealthStatePopupViewModel(IMeteoHealthRepository meteoHealthRepository, DateTime date)
         {
             _meteoHealthRepository = meteoHealthRepository;
+            this.date = date;
             HealthLevel = 3;
             SaveCommand = new Command(OnSave);
         }
@@ -39,12 +41,12 @@ namespace MeteoHealth.ViewModels
             var model = new HealthStateModel
             {
                 HealthLevel = (byte)HealthLevel,
-                Date = DateTime.Today.ToString()
+                Date = date.ToString()
             };
 
             _meteoHealthRepository.SaveHealtStateModel(model);
-            MessagingCenter.Send(this, "ClosePopup");
-            
+            MessagingCenter.Send(this, "ClosePopup"); //System.Reflection.TargetInvocationException: 'Exception has been thrown by the target of an invocation.'
+
         }
     }
 }

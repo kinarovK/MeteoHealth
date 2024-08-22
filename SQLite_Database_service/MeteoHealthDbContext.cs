@@ -25,9 +25,9 @@ namespace SQLite_Database_service
             return _connection.Table<WeatherModel>().ToListAsync();
         }
 
-        public Task<List<HealthStateModel>> GetHealthStatesAsync()
+        public async Task<List<HealthStateModel>> GetHealthStatesAsync()
         {
-            return _connection.Table<HealthStateModel>().ToListAsync();
+            return await _connection.Table<HealthStateModel>().ToListAsync();
         }
         public Task<int> SaveWeatherModelAsync(List<WeatherModel> model)
         {

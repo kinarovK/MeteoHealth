@@ -18,6 +18,8 @@ namespace SQLite_Database_service
         //[System.ComponentModel.DataAnnotations.Schema.Column(TypeName ="text")]
 
         //public string description { get; set; }
+        [DataType(DataType.DateTime)]
+        public string RequestData { get; set; }
         public double Temperature { get; set; }
         public double WindSpeed { get; set; }
         public int PrecipitationProbability { get; set; }

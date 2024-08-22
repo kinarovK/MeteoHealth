@@ -15,7 +15,11 @@ namespace MeteoHealth.Services
         private bool isSync;
         private List<PlotModel> plotModels = new List<PlotModel>();
         public PlotModel CreateHealthChar(List<HealthStateModel> healthData, string yAxisTitle, string dataFieldName)
-        {
+        { 
+            //if (healthData.Count < 2)
+            //{
+            //    return null;
+            //}
             var plotModel = new PlotModel { };
             var lineSeries = new LineSeries
             {
@@ -35,25 +39,49 @@ namespace MeteoHealth.Services
                     lineSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(parsedDateTime), item.HealthLevel));
                 }
             }
-            var minimumDate = (healthData.Count > 5 ? healthData[healthData.Count - 5] : healthData[0]).Date;
-            var dateAxis = new DateTimeAxis
+            DateTimeAxis dateAxis;
+            if (healthData.Count < 5)
             {
-                Position = AxisPosition.Bottom,
-                StringFormat = "yyyy-MM-dd",
-                //Title = "Date"
-                IntervalType = DateTimeIntervalType.Days,
-                MajorStep = 1,
-                MajorGridlineStyle = LineStyle.Solid,
-                MinorGridlineStyle = LineStyle.Dot,
-                Angle = 90,
-                IsPanEnabled = true,
-                //IsZoomEnabled = true,
+                //var minimumDate = (healthData.Count > 5 ? healthData[healthData.Count - 5] : healthData[0]).Date;
+                dateAxis = new DateTimeAxis
+                {
+                    Position = AxisPosition.Bottom,
+                    StringFormat = "yyyy-MM-dd",
+                    //Title = "Date"
+                    IntervalType = DateTimeIntervalType.Days,
+                    MajorStep = 1,
+                    MajorGridlineStyle = LineStyle.Solid,
+                    MinorGridlineStyle = LineStyle.Dot,
+                    Angle = 90,
+                    IsPanEnabled = false,
+                    IsZoomEnabled = false
 
-                Minimum = (DateTimeAxis.ToDouble(DateTime.Parse(minimumDate))),
-                Maximum = DateTimeAxis.ToDouble(DateTime.Parse(healthData[healthData.Count - 1].Date)),
-                AbsoluteMaximum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.Last().Date)),
-                AbsoluteMinimum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.First().Date)),
-            };
+                    
+                };
+            }
+            else
+            {
+                var minimumDate = (healthData.Count > 5 ? healthData[healthData.Count - 5] : healthData[0]).Date;
+                dateAxis = new DateTimeAxis
+                {
+                    Position = AxisPosition.Bottom,
+                    StringFormat = "yyyy-MM-dd",
+                    //Title = "Date"
+                    IntervalType = DateTimeIntervalType.Days,
+                    MajorStep = 1,
+                    MajorGridlineStyle = LineStyle.Solid,
+                    MinorGridlineStyle = LineStyle.Dot,
+                    Angle = 90,
+                    IsPanEnabled = true,
+                    //IsZoomEnabled = true,
+
+                    Minimum = (DateTimeAxis.ToDouble(DateTime.Parse(minimumDate))),
+                    Maximum = DateTimeAxis.ToDouble(DateTime.Parse(healthData[healthData.Count - 1].Date)),
+                    AbsoluteMaximum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.Last().Date)),
+                    AbsoluteMinimum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.First().Date)),
+                };
+            }
+           
             //dateAxis.AxisChanged += OnPressureHealthAxisChanged;
             //dateAxis.AxisChanged += (s, e) => OnAxisChanged(s, e, plotview);
             var healthForPressureAxis = new LinearAxis
@@ -85,6 +113,12 @@ namespace MeteoHealth.Services
 
         public PlotModel CreateWeatherChart(List<WeatherModel> weatherData, List<HealthStateModel> healthData, string yAxisTitle, string dataFieldName)
         {
+
+            //temp sollution for empty datas 
+            if (healthData.Count == 0 || weatherData.Count == 0)
+            {
+                return null;
+            }
             var plotModel = new PlotModel { Title = dataFieldName };
 
             var lineSeries = new LineSeries
@@ -130,36 +164,62 @@ namespace MeteoHealth.Services
                                 item.PrecipitationVolume));
                             break;
                         default:
-                            //Some nofind category exception
+                            //Some no find category exception
                             throw new Exception();
                     }
                 }
                 
             }
             var newCol = weatherData.Where(x => DateTime.Parse(x.DateTime) <= parsedLastHealthdata).ToList();
-            var minimumDateTemp = (weatherData.Count > 33 ? weatherData[newCol.Count - 33] : weatherData[0]).DateTime;
-            // Create the DateTime axis for the X-axis
-            var dateTimeAxis = new DateTimeAxis
+            DateTimeAxis dateTimeAxis;
+            if (newCol.Count >= 33)//optimize
             {
-                Position = AxisPosition.Bottom,
-                StringFormat = "yyyy-MM-dd", // Adjust the format as needed
+                var minimumDateTemp = (weatherData.Count > 33 ? weatherData[newCol.Count - 33] : weatherData[0]).DateTime; //Exception, index out range
+                dateTimeAxis = new DateTimeAxis
+                {
+                    Position = AxisPosition.Bottom,
+                    StringFormat = "yyyy-MM-dd", // Adjust the format as needed
+                    IntervalType = DateTimeIntervalType.Days,
+                    MajorStep = 1,
+                    MajorGridlineStyle = LineStyle.Solid,
+                    MinorGridlineStyle = LineStyle.Dot,
+                    Angle = 90,
+                    IsPanEnabled = true, // Enable panning
+                                         //IsZoomEnabled = true, // Enable zooming
+                                         // Set the initial window to the last 10 records
 
-                IntervalType = DateTimeIntervalType.Days,
-                MajorStep = 1,
-                MajorGridlineStyle = LineStyle.Solid,
-                MinorGridlineStyle = LineStyle.Dot,
+                    Minimum = DateTimeAxis.ToDouble(DateTime.Parse(minimumDateTemp)),
+                    Maximum = DateTimeAxis.ToDouble(DateTime.Parse(weatherData[weatherData.Count - 1].DateTime)),
+                    AbsoluteMaximum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.Last().Date)),
+                    AbsoluteMinimum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.First().Date)),
+                    LabelFormatter = x => string.Empty
+                };
+            }
+            else
+            {
+                //var minimumDateTemp = (weatherData.Count > 33 ? weatherData[newCol.Count - 33] : weatherData[0]).DateTime; //Exception, index out range
+                dateTimeAxis = new DateTimeAxis
+                {
+                    Position = AxisPosition.Bottom,
+                    StringFormat = "yyyy-MM-dd", // Adjust the format as needed
+                    IntervalType = DateTimeIntervalType.Days,
+                    MajorStep = 1,
+                    MajorGridlineStyle = LineStyle.Solid,
+                    MinorGridlineStyle = LineStyle.Dot,
+                    Angle = 90,
+                    IsPanEnabled = false, // Enable panning
+                    IsZoomEnabled = false, // Enable zooming
+                                         // Set the initial window to the last 10 records
 
-                Angle = 90,
-                IsPanEnabled = true, // Enable panning
-                //IsZoomEnabled = true, // Enable zooming
-                // Set the initial window to the last 10 records
-                Minimum = DateTimeAxis.ToDouble(DateTime.Parse(minimumDateTemp)),
-                Maximum = DateTimeAxis.ToDouble(DateTime.Parse(weatherData[weatherData.Count - 1].DateTime)),
-                AbsoluteMaximum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.Last().Date)),
-                AbsoluteMinimum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.First().Date)),
-                LabelFormatter = x => string.Empty
-            };
-            //ateTimeAxis.AxisChanged += OnPressureAxisChanged;
+                    //Minimum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.First().Date)),
+                    //Maximum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.Last().Date)),
+                    //AbsoluteMaximum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.Last().Date)),
+                    //AbsoluteMinimum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.First().Date)),
+                    LabelFormatter = x => string.Empty
+                };
+            }
+           
+           
 
             plotModel.Axes.Add(dateTimeAxis);
             //dateTimeAxis.AxisChanged += (s, e) => OnAxisChanged(s, e, plotview);
@@ -249,6 +309,8 @@ namespace MeteoHealth.Services
 
         public void InitializeCharts(PlotModel sourcePlotModel, PlotModel targetPlotModel)
         {
+            //if (sourcePlotModel == null || targetPlotModel == null)
+            //    return;
             var sourceDateAxis = sourcePlotModel.Axes.OfType<DateTimeAxis>().FirstOrDefault();
             var targetDateAxis = targetPlotModel.Axes.OfType<DateTimeAxis>().FirstOrDefault();
 
