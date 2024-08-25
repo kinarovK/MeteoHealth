@@ -184,6 +184,18 @@ namespace MeteoHealth.ViewModels
  
             }
         }
+        private bool isLoading = false;
+        public bool IsLoading
+        {
+            get { return isLoading; }
+            set 
+            {
+                          
+                    isLoading= value;
+                    OnPropertyChanged(nameof(IsLoading));
+                
+            }
+        }
 
         internal async Task InitializeAsync()
         {
@@ -193,17 +205,16 @@ namespace MeteoHealth.ViewModels
         public async Task InitializeChartsAsync()
         {
             var weatherData = await _meteoHealthRepository.GetWeatherModelAsync(); //Make it asnyc 
-            var healthState = await _meteoHealthRepository.GetHealthStatesAsync(); 
+            var healthState = await _meteoHealthRepository.GetHealthStatesAsync();
 
 
 
-            //var weatherData = CreateMockWeatherModels();
-            //var healthState = CreateHealthModelMock();
-            //if (weatherData.Count == 0 ||healthState.Count < 2)
-            //{
-            //    NotEnoughDataLabel = "Here will be appears the charts when be enought data";
-            //    return;
-            //}
+
+            if (weatherData.Count == 0 || healthState.Count < 2)
+            {
+                NotEnoughDataLabel = "Here will be appears the charts when be enought data";
+                return;
+            }
 
             TemperaturePlotModel = chartmaker.CreateWeatherChart(weatherData, healthState, "Temperature", "Temperature");
             HealthTemperaturePlotModel = chartmaker.CreateHealthChar(healthState, "HealthState", "temp");
@@ -289,6 +300,7 @@ namespace MeteoHealth.ViewModels
         }
         public async Task OnApperering()
         {
+            IsLoading = true;
 
             try
             {
@@ -300,14 +312,17 @@ namespace MeteoHealth.ViewModels
                 //var weather = _meteoHealthRepository.GetWeatherModelAsync().Result;
                 //var some = weather;
 
-
+                await InitializeChartsAsync();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message); 
             }
+            finally
+            {
+                IsLoading = false;
 
-            await InitializeChartsAsync();
+            }
 
 
         }
@@ -329,11 +344,25 @@ namespace MeteoHealth.ViewModels
             if (weathers.Count == 0 || DateTime.Parse(weathers.LastOrDefault().RequestData) != DateTime.Today)
             {
                 var geolocation = await _meteoHealthRepository.GetGeolocationModelsAsync(); //get just last
-                var apiResult = await apiController.ExecuteApiRequest(geolocation.LastOrDefault().Latitude.ToString(), geolocation.LastOrDefault().Longitude.ToString());
-                await _meteoHealthRepository.UpsertWeatherModelAsync(apiService.ConvertToModel(apiResult));
+                WeatherApiResponse apiResult =await apiController.ExecuteApiRequest(geolocation.LastOrDefault().Latitude.ToString(), geolocation.LastOrDefault().Longitude.ToString());
+                if (apiResult != null)
+                {
+                    await _meteoHealthRepository.UpsertWeatherModelAsync(apiService.ConvertToModel(apiResult));
+
+                }
+                else
+                {
+                    bool answer = await Application.Current.MainPage.DisplayAlert("Ooops", "Your internet connection blabla, check your internet connection or try letter", "Try again", "Cancel");
+                    if (answer)
+                    {
+                        await CheckWeather();
+                    }
+                   
+                }
 
             }
 
+            IsLoading = false;
 
 
 
@@ -348,7 +377,7 @@ namespace MeteoHealth.ViewModels
      
         public ICommand ShowAboutPageCommand { get; }
         
-        internal async Task CheckHealthState()//
+        internal async Task CheckHealthState()// 
         {
             
             var healthStates =  await _meteoHealthRepository.GetHealthStatesAsync();
@@ -356,6 +385,7 @@ namespace MeteoHealth.ViewModels
 
             if (healthStates.Count == 0)
             {
+                //call instead ShowHealthPopup
                 await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, "How do u feel today?", healthStateDate));
                 return;
             }
@@ -379,12 +409,10 @@ namespace MeteoHealth.ViewModels
                 {
                     isRecordExists = true;
                 }
-
             }
         }
         private async Task ShowAboutPage()
         {
-
             await Application.Current.MainPage.Navigation.PushAsync(new AboutPage());
         }
         public ICommand ShowGeolocationCommand { get; }
@@ -392,8 +420,5 @@ namespace MeteoHealth.ViewModels
         {
             await Application.Current.MainPage.Navigation.PushAsync(new GeolocationPage(_meteoHealthRepository));
         }
-        
-        
-
     }
 }

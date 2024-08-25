@@ -34,23 +34,20 @@ namespace OpenWeatherMap_Api_Service
 
             try
             {
-                using (var response = client.HttpClient.GetAsync(new Uri(fullApi)))
+                using (var response = await client.HttpClient.GetAsync(new Uri(fullApi)))
                 {
-                    if (response.Result.IsSuccessStatusCode)
+                    if (response.IsSuccessStatusCode)
                     {
 
-                        var json = await response.Result.Content.ReadAsStringAsync();
-                        var res = JsonConvert.DeserializeObject<WeatherApiResponse>(json);
-
-
-                        var some = res;
-
-                        return res;
+                        var json = await response.Content.ReadAsStringAsync();
+                        return JsonConvert.DeserializeObject<WeatherApiResponse>(json);
+                        
                     }
                     return null;
 
                 }
             }
+            //Handle exception or make some logger service
             catch (Exception ex)
             {
 

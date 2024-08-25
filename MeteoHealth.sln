@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenWeatherMap_Api_Service"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLite_Database_service", "SQLite_Database_service\SQLite_Database_service.csproj", "{829DDE85-EA03-4DE2-B484-F2199B209E2F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoLocation_Service", "GeoLocation_Service\GeoLocation_Service.csproj", "{1160748C-A101-4FDF-9471-70035FA55E1F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,18 +115,6 @@ Global
 		{829DDE85-EA03-4DE2-B484-F2199B209E2F}.Release|iPhone.Build.0 = Release|Any CPU
 		{829DDE85-EA03-4DE2-B484-F2199B209E2F}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{829DDE85-EA03-4DE2-B484-F2199B209E2F}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
-		{1160748C-A101-4FDF-9471-70035FA55E1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1160748C-A101-4FDF-9471-70035FA55E1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1160748C-A101-4FDF-9471-70035FA55E1F}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{1160748C-A101-4FDF-9471-70035FA55E1F}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{1160748C-A101-4FDF-9471-70035FA55E1F}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{1160748C-A101-4FDF-9471-70035FA55E1F}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{1160748C-A101-4FDF-9471-70035FA55E1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1160748C-A101-4FDF-9471-70035FA55E1F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1160748C-A101-4FDF-9471-70035FA55E1F}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{1160748C-A101-4FDF-9471-70035FA55E1F}.Release|iPhone.Build.0 = Release|Any CPU
-		{1160748C-A101-4FDF-9471-70035FA55E1F}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{1160748C-A101-4FDF-9471-70035FA55E1F}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

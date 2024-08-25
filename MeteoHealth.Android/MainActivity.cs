@@ -5,6 +5,8 @@ using Android.Content.PM;
 using Android.Runtime;
 using Android.OS;
 using Android;
+using Android.Views;
+using Xamarin.Forms.Platform.Android;
 
 namespace MeteoHealth.Droid
 {
@@ -22,7 +24,8 @@ namespace MeteoHealth.Droid
         {
             base.OnCreate(savedInstanceState);
 
-
+            //Window.DecorView.SystemUiVisibility
+            Window.SetStatusBarColor(Android.Graphics.Color.LightGray);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             Xamarin.FormsMaps.Init(this, savedInstanceState);
@@ -51,4 +54,7 @@ namespace MeteoHealth.Droid
             }
         }
     }
+
+  
+
 }

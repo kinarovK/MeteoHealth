@@ -7,7 +7,8 @@
              xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps" 
              xmlns:viewmodels="clr-namespace:MeteoHealth.ViewModels" x:DataType="viewmodels:GeolocationPageViewModel"
              x:Class="MeteoHealth.Views.GeolocationPage"
-             Shell.NavBarIsVisible="False">
+             Shell.NavBarIsVisible="False"
+             Title="Geolocation">
     <ContentPage.Content>
         <Grid>
             <Grid.RowDefinitions>
