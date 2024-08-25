@@ -60,12 +60,12 @@ namespace MeteoHealth
 
             //MainPage = new MainPage();
             //db.DeleteGeolocationAsync();
-            //db.DeleteHealthStateModelsAsync();
+            db.DeleteHealthStateModelsAsync();
             db.DeleteWeatherModelsAsync();
             //MainPage = new NavigationPage(ServiceProvider.GetRequiredService<MainPage>());
             Device.BeginInvokeOnMainThread(() =>
             {
-                Application.Current.MainPage = new NavigationPage(new MainFlyoutPage(db, chart, reportMaker, weatherApi, apiService));
+                Application.Current.MainPage = new MainFlyoutPage(db, chart, reportMaker, weatherApi, apiService);
 
             });
 
@@ -146,7 +146,7 @@ namespace MeteoHealth
                 var chart = ServiceProvider.GetRequiredService<IChartMaker>();
                 var reportMaker = ServiceProvider.GetRequiredService<IReportMaker>();
                 var apiService = ServiceProvider.GetRequiredService<IWeatherApiService>();
-                Application.Current.MainPage = new NavigationPage(new MainFlyoutPage(db, chart, reportMaker, weatherApi, apiService));
+                Application.Current.MainPage = new MainFlyoutPage(db, chart, reportMaker, weatherApi, apiService);
             });
         
     }

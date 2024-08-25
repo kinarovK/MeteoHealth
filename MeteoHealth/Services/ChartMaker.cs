@@ -56,7 +56,9 @@ namespace MeteoHealth.Services
                     IsPanEnabled = false,
                     IsZoomEnabled = false
 
-                    
+
+                   
+
                 };
             }
             else
@@ -174,7 +176,7 @@ namespace MeteoHealth.Services
             DateTimeAxis dateTimeAxis;
             if (newCol.Count >= 33)//optimize
             {
-                var minimumDateTemp = (weatherData.Count > 33 ? weatherData[newCol.Count - 33] : weatherData[0]).DateTime; //Exception, index out range
+                var minimumDateTemp = (weatherData.Count > 33 ? weatherData[newCol.Count - 33] : weatherData[0]).DateTime; 
                 dateTimeAxis = new DateTimeAxis
                 {
                     Position = AxisPosition.Bottom,
@@ -197,7 +199,7 @@ namespace MeteoHealth.Services
             }
             else
             {
-                //var minimumDateTemp = (weatherData.Count > 33 ? weatherData[newCol.Count - 33] : weatherData[0]).DateTime; //Exception, index out range
+                //var minimumDateTemp = (weatherData.Count > weatherData.Count/8 ? weatherData[newCol.Count - weatherData.Count / 8] : weatherData[0]).DateTime; //Exception, index out range
                 dateTimeAxis = new DateTimeAxis
                 {
                     Position = AxisPosition.Bottom,
@@ -209,12 +211,12 @@ namespace MeteoHealth.Services
                     Angle = 90,
                     IsPanEnabled = false, // Enable panning
                     IsZoomEnabled = false, // Enable zooming
-                                         // Set the initial window to the last 10 records
+                                           // Set the initial window to the last 10 records
 
-                    //Minimum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.First().Date)),
-                    //Maximum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.Last().Date)),
-                    //AbsoluteMaximum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.Last().Date)),
-                    //AbsoluteMinimum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.First().Date)),
+                    AbsoluteMinimum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.First().Date)),
+                    AbsoluteMaximum = DateTimeAxis.ToDouble(DateTime.Parse(healthData.Last().Date)),
+
+
                     LabelFormatter = x => string.Empty
                 };
             }
@@ -249,32 +251,6 @@ namespace MeteoHealth.Services
             return plotModel;
         }
 
-        //private void OnAxisChanged(DateTimeAxis sourceAxis, AxisChangedEventArgs e)
-        //{
-        //    if (isSync) return;
-        //    isSync = true;
-
-        //    foreach (var targetPlotModel in plotModels)
-        //    {
-        //        var targetAxis = targetPlotModel.Axes.OfType<DateTimeAxis>().FirstOrDefault();
-        //        if (targetAxis != null && targetAxis != sourceAxis)
-        //        {
-        //            // Detach existing event handler
-        //            targetAxis.AxisChanged -= (s, args) => OnAxisChanged(targetAxis, args);
-
-        //            // Sync the axis
-        //            targetAxis.Zoom(sourceAxis.ActualMinimum, sourceAxis.ActualMaximum);
-
-        //            // Attach the event handler back
-        //            targetAxis.AxisChanged += (s, args) => OnAxisChanged(targetAxis, args);
-
-        //            // Refresh the target plot
-        //            targetPlotModel.InvalidatePlot(false);
-        //        }
-        //    }
-
-        //    isSync = false;
-        //}
         private void SyncTwoCharts(DateTimeAxis sourceAxis, PlotModel targetPlotModel)
         {
             var targetAxis = targetPlotModel.Axes.OfType<DateTimeAxis>().FirstOrDefault();

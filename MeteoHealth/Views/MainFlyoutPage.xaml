@@ -3,8 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:MeteoHealth.Views"
             x:Class="MeteoHealth.Views.MainFlyoutPage">
     <FlyoutPage.Flyout>
-        <ContentPage Title="Menu">
-            <StackLayout>
+        
+        <ContentPage Title="Menu" Padding="0" >
+             
+                
+                <StackLayout Padding="0" Margin="0">
                 <Button Text="Home" Clicked="OnHomeClicked" />
                 <Button Text="Geolocation" Clicked="OnGeolocationClicked" />
                 <Button Text="About" Clicked="OnAboutClicked" />
@@ -14,6 +17,10 @@
         </ContentPage>
     </FlyoutPage.Flyout>
     <FlyoutPage.Detail>
-        <NavigationPage x:Name="detailPage"/>
+
+        <NavigationPage x:Name="detailPage" Padding="0">
+            
+           
+        </NavigationPage>
     </FlyoutPage.Detail>
 </FlyoutPage>

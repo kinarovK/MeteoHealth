@@ -2,42 +2,54 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:MeteoHealth"  
-             
              x:Class="MeteoHealth.Views.MainPage"   
-            
-             
-             xmlns:oxy="clr-namespace:OxyPlot.Xamarin.Forms;assembly=OxyPlot.Xamarin.Forms" xmlns:viewmodels="clr-namespace:MeteoHealth.ViewModels" x:DataType="viewmodels:MainPageViewModel">
+             xmlns:oxy="clr-namespace:OxyPlot.Xamarin.Forms;assembly=OxyPlot.Xamarin.Forms" xmlns:viewmodels="clr-namespace:MeteoHealth.ViewModels" 
+             x:DataType="viewmodels:MainPageViewModel"
+  
+             Title="Home"
+           
+             Padding="0">
     
     <ContentPage.Content>
         
-        <ScrollView>
+        <ScrollView Padding="0">
+            
+            <Grid RowSpacing="0" Padding="0" ColumnSpacing="0">
 
-        <Grid RowSpacing="20" Padding="10" ColumnSpacing="10">
-             
+                
                 <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                
-                <RowDefinition Height="400" />
+                <RowDefinition Height="300" />
                 <RowDefinition Height="200" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="400" />
-                <RowDefinition Height="200" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="400" />
-                <RowDefinition Height="200" />
-                <RowDefinition Height="400" />
-                <RowDefinition Height="200" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="300" />
+                    <RowDefinition Height="200" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="300" />
+                    <RowDefinition Height="200" />
+                    <RowDefinition Height="300" />
+                    <RowDefinition Height="200" />
+                    <RowDefinition Height="300" />
+                    <RowDefinition Height="200" />
+                    <RowDefinition Height="300" />
+                    <RowDefinition Height="200" />
+
+                  
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                           
+                           Color="Blue"
+                           VerticalOptions="CenterAndExpand"
+                           HorizontalOptions="CenterAndExpand"/>
                 <Label Text="{Binding NotEnoughDataLabel}" 
                Grid.Row="0"
                        Grid.Column="0"
                HorizontalOptions="Center" 
                FontSize="Large"
-               Margin="0,20,0,10" />
+               Margin="0,0,0,10" />
 
                 <!-- Temp Chart -->
                 <oxy:PlotView x:Name="TemperaturePlotView" 
@@ -46,7 +58,6 @@
                       Grid.Column="0" 
                       HorizontalOptions="FillAndExpand" 
                       VerticalOptions="FillAndExpand" 
-                          HeightRequest="300"
                          />
                 <oxy:PlotView x:Name="HealthTemperaturePlotView"
                     Model="{Binding HealthTemperaturePlotModel}"
@@ -55,7 +66,6 @@
                       Grid.Column="0" 
                       HorizontalOptions="FillAndExpand" 
                       VerticalOptions="FillAndExpand" 
-                          HeightRequest="300"
                          />
 
                 <BoxView HeightRequest="20" Grid.Row="3" />
@@ -66,7 +76,6 @@
                       Grid.Column="0" 
                       HorizontalOptions="FillAndExpand" 
                       VerticalOptions="FillAndExpand" 
-                          HeightRequest="300"
                          />
                 <oxy:PlotView x:Name="PressureHealthPlotView"
                                  Model="{Binding HealthPressurePlotModel}"
@@ -74,7 +83,6 @@
                       Grid.Column="0"
                       HorizontalOptions="FillAndExpand"
                       VerticalOptions="FillAndExpand" 
-                          HeightRequest="100"
                      />
                 <BoxView HeightRequest="20" Grid.Row="6" />
                 <!-- Humidity Chart -->
@@ -84,7 +92,6 @@
                       Grid.Column="0" 
                       HorizontalOptions="FillAndExpand" 
                       VerticalOptions="FillAndExpand" 
-                          HeightRequest="300"
                          />
                 <oxy:PlotView x:Name="HumidityHealthPlotView"
                                 Model="{Binding HealthHumidityPlotModel}"
@@ -92,7 +99,6 @@
                       Grid.Column="0"
                       HorizontalOptions="FillAndExpand"
                       VerticalOptions="FillAndExpand" 
-                          HeightRequest="100"
                      />
                 <!-- Wind Chart -->
                 <oxy:PlotView x:Name="WindPlotView" 
@@ -101,7 +107,6 @@
                       Grid.Column="0" 
                       HorizontalOptions="FillAndExpand" 
                       VerticalOptions="FillAndExpand" 
-                          HeightRequest="300"
                          />
                 <oxy:PlotView x:Name="WindHealthPlotView"
                                 Model="{Binding HealthWindPlotModel}"
@@ -109,7 +114,6 @@
                       Grid.Column="0"
                       HorizontalOptions="FillAndExpand"
                       VerticalOptions="FillAndExpand" 
-                          HeightRequest="100"
                      />
                 <!-- PrecipitationProbability Chart -->
                 <oxy:PlotView x:Name="PrecipitationProbabilityPlotView" 
@@ -118,7 +122,6 @@
                       Grid.Column="0" 
                       HorizontalOptions="FillAndExpand" 
                       VerticalOptions="FillAndExpand" 
-                          HeightRequest="300"
                          />
                 <oxy:PlotView x:Name="PrecipitationProbabilityHealthPlotView"
                                 Model="{Binding HealthPrecipitationProbPlotModel}"
@@ -126,7 +129,6 @@
                       Grid.Column="0"
                       HorizontalOptions="FillAndExpand"
                       VerticalOptions="FillAndExpand" 
-                          HeightRequest="100"
                      />
 
                 <!-- PrecipitationVolume Chart -->
@@ -136,7 +138,6 @@
                       Grid.Column="0" 
                       HorizontalOptions="FillAndExpand" 
                       VerticalOptions="FillAndExpand" 
-                          HeightRequest="300"
                          />
                 <oxy:PlotView x:Name="PrecipitationVolumeHealthPlotView"
                                 Model="{Binding HealthPrecipitationVolPlotModel}"
@@ -144,7 +145,6 @@
                       Grid.Column="0"
                       HorizontalOptions="FillAndExpand"
                       VerticalOptions="FillAndExpand" 
-                          HeightRequest="100"
                      />
 
 

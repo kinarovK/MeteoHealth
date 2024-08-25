@@ -2,7 +2,8 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MeteoHealth.Views.ReportPage"
-             xmlns:viewmodels="clr-namespace:MeteoHealth.ViewModels" x:DataType="viewmodels:ReportPageViewModel">
+             xmlns:viewmodels="clr-namespace:MeteoHealth.ViewModels" x:DataType="viewmodels:ReportPageViewModel"
+             Title="Report">
              
    
                 

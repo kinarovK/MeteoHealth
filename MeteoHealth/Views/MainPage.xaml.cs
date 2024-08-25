@@ -19,7 +19,7 @@ using OxyPlot.Series;
 using MeteoHealth.Models;
 using MeteoHealth.Services;
 using OxyPlot.Xamarin.Forms;
-using GeoLocation_Service;
+
 using Xamarin.Essentials;
 using Microsoft.Extensions.DependencyInjection;
 using MeteoHealth.ViewModels;
@@ -61,7 +61,7 @@ namespace MeteoHealth.Views
         {
             InitializeComponent();
 
-
+        
             //var oxyThicknessForWeatherCharts = new OxyThickness(40, 0, 10, 0);
             //var oxyThicknessForHealth = new OxyThickness(41, 10, 10, 80);
             //var defaultOxyThickness = new OxyThickness(0);
