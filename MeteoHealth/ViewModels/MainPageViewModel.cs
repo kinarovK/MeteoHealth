@@ -5,8 +5,8 @@ using OpenWeatherMap_Api_Service.Interfaces;
 using OpenWeatherMap_Api_Service.Models;
 using OxyPlot;
 //using OxyPlot.Xamarin.Forms;
-using SQLite_Database_service;
 using SQLite_Database_service.Interfaces;
+using SQLite_Database_service.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,7 +27,7 @@ namespace MeteoHealth.ViewModels
 
         private readonly IMeteoHealthRepository _meteoHealthRepository;
         private readonly IChartMaker chartmaker;
-        private readonly IApiController apiController;
+        private readonly IOpenWeatherMapApiController apiController;
         private readonly IWeatherApiService apiService;
 
         //Temperature
@@ -157,13 +157,13 @@ namespace MeteoHealth.ViewModels
             }
         }
         //CTOR
-        public MainPageViewModel(IMeteoHealthRepository meteoHealthRepository, IChartMaker chartMaker, IApiController apiController, IWeatherApiService apiService)
+        public MainPageViewModel(IMeteoHealthRepository meteoHealthRepository, IChartMaker chartMaker, IOpenWeatherMapApiController apiController, IWeatherApiService apiService)
         {
             _meteoHealthRepository = meteoHealthRepository;
             this.chartmaker = chartMaker;
             this.apiController = apiController;
             this.apiService = apiService;
-            ShowhealthPopupCommand = new Command(ShowHealthPopup);
+            ShowhealthPopupCommand = new Command(async() =>await ShowHealthPopupAsync());
             ShowAboutPageCommand = new Command(async () => await ShowAboutPage());  //async () => await GetReportDetails()
             ShowGeolocationCommand = new Command(async () => await ShowGeoLocationPage());
             //OnApperering();
@@ -204,7 +204,7 @@ namespace MeteoHealth.ViewModels
         }
         public async Task InitializeChartsAsync()
         {
-            var weatherData = await _meteoHealthRepository.GetWeatherModelAsync(); //Make it asnyc 
+            var weatherData = await _meteoHealthRepository.GetWeatherModelAsync(); 
             var healthState = await _meteoHealthRepository.GetHealthStatesAsync();
 
 
@@ -340,11 +340,11 @@ namespace MeteoHealth.ViewModels
         internal async Task CheckWeather()
         {
 
-            var weathers = await _meteoHealthRepository.GetWeatherModelAsync(); //or maybe get last 
-            if (weathers.Count == 0 || DateTime.Parse(weathers.LastOrDefault().RequestData) != DateTime.Today)
+            var weathers = await _meteoHealthRepository.GetLastWeatherModelAsync(); //or maybe get last 
+            if (weathers == null || DateTime.Parse(weathers.RequestData) != DateTime.Today)
             {
-                var geolocation = await _meteoHealthRepository.GetGeolocationModelsAsync(); //get just last
-                WeatherApiResponse apiResult =await apiController.ExecuteApiRequest(geolocation.LastOrDefault().Latitude.ToString(), geolocation.LastOrDefault().Longitude.ToString());
+                var geolocation = await _meteoHealthRepository.GetLastGeolocationModelAsync(); //get just last
+                WeatherApiResponse apiResult =await apiController.ExecuteApiRequest(geolocation.Latitude.ToString(), geolocation.Longitude.ToString());
                 if (apiResult != null)
                 {
                     await _meteoHealthRepository.UpsertWeatherModelAsync(apiService.ConvertToModel(apiResult));
@@ -369,10 +369,10 @@ namespace MeteoHealth.ViewModels
 
         }
         public ICommand ShowhealthPopupCommand { get; }
-        private void ShowHealthPopup()
+        private async Task ShowHealthPopupAsync()
         {
             var popup = new HealthStatePopup(_meteoHealthRepository, "Hi", DateTime.Today);
-            Application.Current.MainPage.Navigation.ShowPopup(popup);
+            await Application.Current.MainPage.Navigation.ShowPopupAsync(popup);
         }
      
         public ICommand ShowAboutPageCommand { get; }

@@ -1,4 +1,4 @@
-﻿using SQLite_Database_service;
+﻿using SQLite_Database_service.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -18,14 +18,13 @@ namespace SQLite_Database_service.Interfaces
         public Task<int> UpsertWeatherModelAsync(List<WeatherModel> models);
         public Task<int> SaveGeolocationModelAsync(GeolocationModel model);
         public  Task<List<GeolocationModel>> GetGeolocationModelsAsync();
+        public  Task<GeolocationModel> GetLastGeolocationModelAsync();
 
-        public Task<int> DeleteWeatherModelsAsync();
+        public Task<WeatherModel> GetLastWeatherModelAsync();
+        public Task<HealthStateModel> GetLastHealthStateModelAsync();
 
 
-        public Task<int> DeleteHealthStateModelsAsync();
-
-
-        public Task<int> DeleteGeolocationAsync();
+        public Task ClearDatabase();
       
 
     }

@@ -4,9 +4,24 @@
              x:Class="MeteoHealth.Views.AboutReportPage">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <Label Text="About summary"
+                VerticalOptions="Start"  
+                HorizontalOptions="CenterAndExpand" 
+                   FontSize="Large"/>
+            <Label Text="The summary in this application is based on statistical methods, employing two distinct approaches for performing the calculations. The first approach involves linear regression, which is conducted separately between each weather parameter and the well-being variable. The second approach is multiple regression, which examines the relationship between all weather factors and well-being simultaneously.
+
+The strength of these relationships is measured using the R² (coefficient of determination) value, which reflects how well the weather factors explain the variations in well-being.
+
+The R² value ranges between 0 and 1, with higher values indicating a stronger relationship. The classification criteria are as follows:
+
+If the R² value exceeds 0.75, the factor is classified as having a potential relationship, indicating a strong connection between health state and the weather parameter.
+If the R² value is between 0.5 and 0.75, the factor is classified as having a possible relationship, indicating a moderate connection.
+This methodology allows for an objective evaluation of the relationships between weather factors and health state, categorizing the results accordingly and supporting further analysis and conclusions."
+                   
+                   HorizontalTextAlignment="Start"
+                   FontSize="Medium"/>
+            <Label Text="*The calculations cannot give 100 percent accuracy on the relationship between the state of health state and weather parameters, as there may be many other variables. "
+                   TextColor="Red"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

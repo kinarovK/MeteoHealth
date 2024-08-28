@@ -1,4 +1,5 @@
 ﻿using SQLite_Database_service.Interfaces;
+using SQLite_Database_service.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -26,9 +27,26 @@ namespace SQLite_Database_service
         {
             return await _context.GetHealthStatesAsync();
         }
+        public Task<List<GeolocationModel>> GetGeolocationModelsAsync()
+        {
+            return _context.GetGeolocationModelsAsync();
+        }
+        public async Task<GeolocationModel> GetLastGeolocationModelAsync()
+        {
+            return await _context.GetLastGeolocationModelAsync();
+        }
+
+        public async Task<WeatherModel> GetLastWeatherModelAsync()
+        {
+            return await _context.GetLastWeatherModelAsync();
+        }
+        public async Task<HealthStateModel> GetLastHealthStateModelAsync()
+        {
+            return await _context.GetLastHealthStateModelAsync();
+        }
+        //
         public Task<int> SaveWeatherModelAsync(List<WeatherModel> model)
         {
-
             return _context.SaveWeatherModelAsync(model);
         }
         public Task<int> SaveHealtStateModel(HealthStateModel model)
@@ -47,27 +65,21 @@ namespace SQLite_Database_service
             return await _context.UpsertWeatherModelAsync(models);
         }
 
-        public  Task<List<GeolocationModel>> GetGeolocationModelsAsync()
-        {
-            // _context.ClearGeolocationModelAsync();
-            return  _context.GetGeolocationModelsAsync();
-        }
+       
         public async Task<int> SaveGeolocationModelAsync(GeolocationModel model)
         {
             return await _context.SaveGeolocationModelAsync(model);
         }
 
-        public async Task<int> DeleteWeatherModelsAsync()
+
+        public async Task ClearDatabase()
         {
-            return await _context.ClearWeatherModelAsync();
+            await _context.ClearWeatherModelAsync();
+            await _context.ClearHealthStateModelAsync();
+            await _context.ClearGeolocationModelAsync();
+
         }
-        public async Task<int> DeleteHealthStateModelsAsync()
-        {
-            return await _context.ClearHealthStateModelAsync();
-        }
-        public async Task<int> DeleteGeolocationAsync()
-        {
-            return await _context.ClearGeolocationModelAsync();
-        }
+
+       
     }
 }

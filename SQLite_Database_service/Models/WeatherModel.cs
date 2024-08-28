@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SQLite_Database_service
+namespace SQLite_Database_service.Models
 {
     public class WeatherModel
     {

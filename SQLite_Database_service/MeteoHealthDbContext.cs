@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SQLite_Database_service.Models;
 
 namespace SQLite_Database_service
 {
@@ -72,6 +74,20 @@ namespace SQLite_Database_service
             return  _connection.Table<GeolocationModel>().ToListAsync();
         }
 
+        public async Task<GeolocationModel> GetLastGeolocationModelAsync()
+        {
+            return await _connection.Table<GeolocationModel>().OrderByDescending(i => i.Id).FirstOrDefaultAsync();
+        }
+
+        public async Task<HealthStateModel> GetLastHealthStateModelAsync()
+        {
+            return await _connection.Table<HealthStateModel>().OrderByDescending(i => i.Id).FirstOrDefaultAsync();
+        }
+        public async Task<WeatherModel> GetLastWeatherModelAsync()
+        {
+            return await _connection.Table<WeatherModel>().OrderByDescending(i => i.Id).FirstOrDefaultAsync();
+        }
+
         public Task<int> ClearWeatherModelAsync()
         {
             return _connection.DeleteAllAsync<WeatherModel>();
@@ -86,8 +102,6 @@ namespace SQLite_Database_service
         {
             return _connection.DeleteAllAsync<GeolocationModel>();
         }
-        //Delete records 
 
-        //update records 
     }
 }

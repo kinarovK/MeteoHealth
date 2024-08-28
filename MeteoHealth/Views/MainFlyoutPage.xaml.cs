@@ -19,10 +19,11 @@ namespace MeteoHealth.Views
 		private readonly IMeteoHealthRepository meteoHealthRepository;
 		private readonly IChartMaker chartMaker;
         private readonly IReportMaker reportMaker;
-        private readonly IApiController apiController;
+        private readonly IOpenWeatherMapApiController apiController;
         private readonly IWeatherApiService apiService;
         private MainPage mainPage;
-        public MainFlyoutPage (IMeteoHealthRepository repo, IChartMaker chMaker, IReportMaker reportMaker, IApiController apiController, IWeatherApiService apiService)
+        private NavigationPage navigationPage;
+        public MainFlyoutPage (IMeteoHealthRepository repo, IChartMaker chMaker, IReportMaker reportMaker, IOpenWeatherMapApiController apiController, IWeatherApiService apiService)
 		{
 			InitializeComponent ();
 			meteoHealthRepository = repo;
@@ -30,25 +31,31 @@ namespace MeteoHealth.Views
             this.reportMaker = reportMaker;
             this.apiController = apiController;
             this.apiService = apiService;
-            mainPage = CreateMainPage();
-            Detail = new NavigationPage(mainPage);
+            mainPage = new MainPage(meteoHealthRepository, chartMaker, apiController, apiService);
+            navigationPage = new NavigationPage(mainPage);
+            Detail = navigationPage;
+
+
+            //Detail = new NavigationPage(mainPage);
 		}
-		private async void OnHomeClicked(object sender, EventArgs e)
-		{
-            //Detail = new NavigationPage(new MainPage(meteoHealthRepository, chartMaker));
-            //IsPresented = true;
-            if (Detail is NavigationPage navigationPage && navigationPage.CurrentPage == mainPage)
-            {
-                // No need to create a new page; just show it
-                IsPresented = false;
-            }
-            else
-            {
-                Detail = new NavigationPage(mainPage);
-                IsPresented = false;
-            }
+        internal void OnHomeClicked(object sender, EventArgs e)
+        {
+
+            //if (Detail is NavigationPage navigationPage && navigationPage.CurrentPage == mainPage)
+            //{
+            //    IsPresented = false;
+            //}
+            //else
+            //{
+            //    Detail = new NavigationPage(CreateMainPage());
+            //    IsPresented = false;
+            //}
+            var mainPage = new MainPage(meteoHealthRepository, chartMaker, apiController, apiService);
+            navigationPage = new NavigationPage(mainPage);
+            Detail = navigationPage;
+            IsPresented = false;
         }
-		private async void OnGeolocationClicked(object sender, EventArgs e)
+        private void OnGeolocationClicked(object sender, EventArgs e)
 		{
 			Detail = new NavigationPage(new GeolocationPage(meteoHealthRepository));
 			IsPresented = false;
@@ -56,7 +63,10 @@ namespace MeteoHealth.Views
         private async void OnAboutClicked(object sender, EventArgs e)
         {
             Detail = new NavigationPage(new AboutPage());
-            IsPresented = false; 
+            IsPresented = false;
+            //var aboutPage = new AboutPage();
+            //await navigationPage.PushAsync(aboutPage); // Use PushAsync to navigate
+            //IsPresented = false;
         }
         private MainPage CreateMainPage()
         {
@@ -68,8 +78,11 @@ namespace MeteoHealth.Views
 
         private void OnReportClicked(object sender, EventArgs e)
         {
-			Detail = new NavigationPage(new ReportPage(meteoHealthRepository, reportMaker));
-			IsPresented = false;
+            Detail = new NavigationPage(new ReportPage(meteoHealthRepository, reportMaker));
+            IsPresented = false;
+            //var reportPage = new ReportPage(meteoHealthRepository, reportMaker);
+            //navigationPage.PushAsync(reportPage); // Use PushAsync to navigate
+            //IsPresented = false;
         }
     }
 }

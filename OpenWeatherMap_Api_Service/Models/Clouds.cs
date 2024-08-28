@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace OpenWeatherMap_Api_Service.Models
 {
-    public class Clouds
-    {
-        public int all { get; set; }
-    }
+    //public class Clouds
+    //{
+    //    public int all { get; set; }
+    //}
 }
