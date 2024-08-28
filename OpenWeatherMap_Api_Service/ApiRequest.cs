@@ -13,7 +13,7 @@ using System.Threading;
 
 namespace OpenWeatherMap_Api_Service
 {
-    internal class ApiRequest : IApiRequest
+    internal class ApiRequest : IOpenWeatherMapApiRequest
     {
         private readonly IWeatherApiHttpClient client;
         private readonly string apiUri;

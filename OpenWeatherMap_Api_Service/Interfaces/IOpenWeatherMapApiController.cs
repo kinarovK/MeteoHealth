@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OpenWeatherMap_Api_Service.Interfaces
 {
-    public interface IApiController
+    public interface IOpenWeatherMapApiController
     {
         Task<WeatherApiResponse> ExecuteApiRequest(string city);
         Task<WeatherApiResponse> ExecuteApiRequest(string lat, string lon);

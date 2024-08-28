@@ -2,6 +2,7 @@
 using MeteoHealth.Views;
 using SQLite_Database_service;
 using SQLite_Database_service.Interfaces;
+using SQLite_Database_service.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

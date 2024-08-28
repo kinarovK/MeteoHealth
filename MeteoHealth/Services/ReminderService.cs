@@ -23,11 +23,11 @@ namespace MeteoHealth.Services
             throw new NotImplementedException();
         }
 
-        public bool IsTodayHealthStateChecked()
+        public async Task<bool> IsTodayHealthStateCheckedAsync()
         {
-            var todayHealthState =  meteoHealthRepository.GetHealthStatesAsync();
+            var todayHealthState = await meteoHealthRepository.GetHealthStatesAsync();
 
-            var today = todayHealthState.Result.FirstOrDefault(x => x.Date == DateTime.Today.ToString());
+            var today = todayHealthState.FirstOrDefault(x => x.Date == DateTime.Today.ToString());
             if (today  == null)
             {
                 return false;
@@ -35,9 +35,9 @@ namespace MeteoHealth.Services
             return true;
         }
 
-        public void ScheduleDailyReminder(int hour, int minute)
+        public async Task ScheduleDailyReminder(int hour, int minute)
         {
-            if (!IsTodayHealthStateChecked())
+            if (!await IsTodayHealthStateCheckedAsync())
             {
                 notificationService.CallDailyReminder(hour, minute);
             }

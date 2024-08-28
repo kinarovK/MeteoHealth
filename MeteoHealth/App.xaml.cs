@@ -38,34 +38,39 @@ namespace MeteoHealth
        
             var s = serviceCollection.BuildServiceProvider();
             ServiceProvider = serviceCollection.BuildServiceProvider();
-            var start = s.GetRequiredService<IApiController>();
+            var start = s.GetRequiredService<IOpenWeatherMapApiController>();
 
             
 
             var db = s.GetRequiredService<IMeteoHealthRepository>();
-            var weatherApi = s.GetRequiredService<IApiController>();
-            //var result = start.ExecuteApiRequest("48.124", "22.15566");
+            var weatherApi = s.GetRequiredService<IOpenWeatherMapApiController>();
+    
             var chart = s.GetRequiredService<IChartMaker>();
             var reportMaker = s.GetRequiredService<IReportMaker>();
             var apiService = s.GetRequiredService<IWeatherApiService>();
-            //var result2 = result.Result;
-            //db.UpsertWeatherModelAsync(ConvertToModel(result.Result));
-            //db.SaveWeatherModelAsync(ConvertToModel(result.Result));
-            //db.UpdateWeatherModelAsync(ConvertToModel(result.Result));
-            //var lists = db.GetWeatherModelAsync().Result;
-
-            //var f = lists.FirstOrDefault();
-            //
-            //DependencyService.Register<MockDataStore>();
-
-            //MainPage = new MainPage();
+    
             //db.DeleteGeolocationAsync();
-            db.DeleteHealthStateModelsAsync();
-            db.DeleteWeatherModelsAsync();
-            //MainPage = new NavigationPage(ServiceProvider.GetRequiredService<MainPage>());
+            //db.DeleteHealthStateModelsAsync();
+            //db.DeleteWeatherModelsAsync();
+          
             Device.BeginInvokeOnMainThread(() =>
             {
-                Application.Current.MainPage = new MainFlyoutPage(db, chart, reportMaker, weatherApi, apiService);
+                //var flyoutpage = new MainFlyoutPage(db, chart, reportMaker, start, apiService)
+                //{
+                //    Title = "Menu"
+                //};
+                //Application.Current.MainPage = new FlyoutPage
+                //{
+                //    Flyout = flyoutpage,
+                //    Detail = new NavigationPage(new MainPage(db, chart, start, apiService))
+                //};
+                var flyout = new MainFlyoutPage(db, chart, reportMaker, start, apiService);
+                MainPage = flyout;
+                //Application.Current.MainPage = new MainFlyoutPage(db, chart, reportMaker, weatherApi, apiService)
+                //{
+                //    Title = "Menu"
+                //};
+                //Application.Current.MainPage = new NavigationPage(new MainFlyoutPage(db, chart, reportMaker, weatherApi, apiService));
 
             });
 
@@ -94,25 +99,7 @@ namespace MeteoHealth
         }
 
 
-        private List<WeatherModel> ConvertToModel(WeatherApiResponse response)
-        {
-            var result = new List<WeatherModel>();
-
-            foreach (var item in response.list)
-            {
-                result.Add(new WeatherModel
-                {
-                    DateTime = item.dt_txt,
-                    Humidity = item.main.humidity,
-                    PrecipitationProbability = (int)item.pop *100,
-                    PrecipitationVolume = (item.rain?.ThreeHours ?? 0) + (item.snow?.ThreeHours ?? 0),
-                    Pressure = item.main.pressure,
-                    Temperature = item.main.temp,
-                    WindSpeed = item.wind.speed
-                });
-            }
-            return result;
-        }
+     
         private IConfiguration BuildConfiguration()
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -135,19 +122,28 @@ namespace MeteoHealth
         }
         protected override void OnStart()
         {
-            var weatherApi = ServiceProvider.GetRequiredService<IApiController>();
+            var weatherApi = ServiceProvider.GetRequiredService<IOpenWeatherMapApiController>();
             //weatherApi.ExecuteApiRequest();
             var reminder = ServiceProvider.GetRequiredService<IReminderService>();
             //reminder.ScheduleDailyReminder(13, 32);
 
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                var db = ServiceProvider.GetRequiredService<IMeteoHealthRepository>();
-                var chart = ServiceProvider.GetRequiredService<IChartMaker>();
-                var reportMaker = ServiceProvider.GetRequiredService<IReportMaker>();
-                var apiService = ServiceProvider.GetRequiredService<IWeatherApiService>();
-                Application.Current.MainPage = new MainFlyoutPage(db, chart, reportMaker, weatherApi, apiService);
-            });
+            //Device.BeginInvokeOnMainThread(() =>
+            //{
+            //    var db = ServiceProvider.GetRequiredService<IMeteoHealthRepository>();
+            //    var chart = ServiceProvider.GetRequiredService<IChartMaker>();
+            //    var reportMaker = ServiceProvider.GetRequiredService<IReportMaker>();
+            //    var apiService = ServiceProvider.GetRequiredService<IWeatherApiService>();
+            //    //Application.Current.MainPage = new NavigationPage(new MainFlyoutPage(db, chart, reportMaker, weatherApi, apiService));
+            //    var flyoutPage = new MainFlyoutPage(db, chart, reportMaker, weatherApi, apiService)
+            //    {
+            //        Title = "Menu"
+            //    };
+            //    Application.Current.MainPage = new FlyoutPage
+            //    {
+            //        Flyout = flyoutPage,
+            //        Detail = new NavigationPage(new MainPage(db, chart, weatherApi, apiService))
+            //    };
+            //});
         
     }
 

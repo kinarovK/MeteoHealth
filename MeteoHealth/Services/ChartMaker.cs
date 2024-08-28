@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SQLite_Database_service;
 using OxyPlot.Xamarin.Forms;
+using SQLite_Database_service.Models;
 
 namespace MeteoHealth.Services
 {

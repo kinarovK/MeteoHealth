@@ -1,6 +1,6 @@
 ﻿using OxyPlot;
 using OxyPlot.Xamarin.Forms;
-using SQLite_Database_service;
+using SQLite_Database_service.Models;
 using System.Collections.Generic;
 
 namespace MeteoHealth.Services

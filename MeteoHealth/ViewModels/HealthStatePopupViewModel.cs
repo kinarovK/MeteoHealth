@@ -1,8 +1,10 @@
 ﻿using SQLite_Database_service;
 using SQLite_Database_service.Interfaces;
+using SQLite_Database_service.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -33,10 +35,10 @@ namespace MeteoHealth.ViewModels
             _meteoHealthRepository = meteoHealthRepository;
             this.date = date;
             HealthLevel = 3;
-            SaveCommand = new Command(OnSave);
+            SaveCommand = new Command(async () => await OnSave());
         }
         public ICommand SaveCommand { get; }
-        private void OnSave()
+        private async Task OnSave()
         {
             var model = new HealthStateModel
             {
@@ -44,7 +46,7 @@ namespace MeteoHealth.ViewModels
                 Date = date.ToString()
             };
 
-            _meteoHealthRepository.SaveHealtStateModel(model);
+            await _meteoHealthRepository.SaveHealtStateModel(model);
             MessagingCenter.Send(this, "ClosePopup"); //System.Reflection.TargetInvocationException: 'Exception has been thrown by the target of an invocation.'
 
         }
