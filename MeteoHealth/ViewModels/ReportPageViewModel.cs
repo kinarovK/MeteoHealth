@@ -34,7 +34,7 @@ namespace MeteoHealth.ViewModels
         {
             this.repo = repo;
             this.reportMaker = reportMaker;
-            GetReportCommand = new Command(() => GetReport());
+            GetReportCommand = new Command(async() =>await GetReport());
             GetReportDetailsCommand = new Command(() => GetReportDetails());
             OpenAboutReportPageCommand = new Command(async () => await OpenAboutReportPageAsync());
             DeleteAllDataCommand = new Command(async () => await DeleteAllDataAsync());
@@ -146,36 +146,26 @@ namespace MeteoHealth.ViewModels
             }
         }
         ReportModel reportModel;
-        public void GetReport()
+        public async Task GetReport()
         {
             PotentialRelationsList.Clear();
             listOfPotentionalRelations.Clear();
 
             PossibleRelationsList.Clear();
             listOfPossibleRelations.Clear();
-            //var result = reportMaker.GetReport();
+            var result = await reportMaker.GetReport();
+
+            if (result == null)
+            {
+                await Application.Current.MainPage.DisplayAlert("Ooops", "Not enought data to summary, keep going to check health state", "OK");
+                return;
+            }
             PotentionalRelationshipLabelIsVisible = true;
             PossibleRelationshipLabelIsVisible = true;
-
-            //return result;
-            reportModel = new ReportModel
-            {
-                TemperatureRelation = 0.15,
-                HumidityRelation = 0.50,
-                PressureRelation = 0.87,
-                PrecVolRelation = 0.45,
-                PrecProbabilityRelation = 0.8,
-                WindRelation = 0.01,
-                FullRelation = 0.005, 
-                FirstDate = "2000.05.15",
-                LastDate = "2010.04.15"
-            };
-
+            reportModel = await reportMaker.GetReport();
             IsBiggerThanThresholdValue(reportModel);
             ChangeNaming(ref listOfPotentionalRelations);
             ChangeNaming(ref listOfPossibleRelations);
-
-            //PossibleRelationsList = new ObservableCollection<string>();
 
             foreach (var item in listOfPotentionalRelations)
             {

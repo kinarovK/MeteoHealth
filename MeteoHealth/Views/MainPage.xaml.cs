@@ -30,32 +30,8 @@ namespace MeteoHealth.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MainPage : ContentPage
     {
-        private readonly IMeteoHealthRepository repo;
+        //private readonly IMeteoHealthRepository repo;
 
-        //private PlotModel temperaturePlotmodel;
-        //private PlotModel healthForTemperaturePlotModel;
-
-        //private PlotModel pressurePlotModel;
-        //private PlotModel healthForPressurePlotModel;
-
-        //private PlotModel humidityPlotModel;
-        //private PlotModel healthForHumidityPlotModel;
-
-        //private bool isTempHealthSync;
-        //private bool isPressHealthSync;
-        //private bool isHumHealthSync;
-        //private readonly IMeteoHealthRepository meteoHealthRepository;
-
-        //public MainPage() :this(App.ServiceProvider.GetRequiredService<IMeteoHealthRepository>())
-        //{
-
-        //}
-        //private MainPageViewModel viewModel;
-
-        //public MainPage()
-        //{
-
-        //}
         private MainPageViewModel viewModel;
         public MainPage(IMeteoHealthRepository repo, IChartMaker chartMaker, IOpenWeatherMapApiController apiController, IWeatherApiService apiService)
         {
@@ -72,10 +48,10 @@ namespace MeteoHealth.Views
         {
             base.OnAppearing();
          
-            var oxyThicknessForWeatherCharts = new OxyThickness(40, 0, 10, 0);
-            var oxyThicknessForHealth = new OxyThickness(41, 10, 10, 80);
+            var oxyThicknessForWeatherCharts = new OxyThickness(50, 10, 10, 0);
+            var oxyThicknessForHealth = new OxyThickness(50, 10, 10, 80);
             var defaultOxyThickness = new OxyThickness(0);
-            await viewModel.InitializeAsync();
+            await viewModel.OnApperering();
 
             try
             {
@@ -133,10 +109,16 @@ namespace MeteoHealth.Views
                 PrecipitationVolumeHealthPlotView.Model.PlotMargins = oxyThicknessForHealth;
                 PrecipitationVolumeHealthPlotView.Model.Padding = defaultOxyThickness;
             }
+            catch (NullReferenceException ex)
+            {
+                //Throws when not enought data 
+                return;
+            }
             catch (Exception ex)
             {
+
                 
-                //await Application.Current.MainPage.DisplayAlert("Error", $"An unexpected error occurred, try letter", "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", $"An unexpected error occurred, try letter", "OK");
                 //OnAppearing();
                 return;
             }

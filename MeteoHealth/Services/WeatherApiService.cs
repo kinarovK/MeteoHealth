@@ -18,7 +18,7 @@ namespace MeteoHealth.Services
             {
                 result.Add(new WeatherModel
                 {
-                    RequestData = DateTime.Today.ToString("yyyy.MM.DD"),
+                    RequestDate = DateTime.Today.ToString("yyyy.MM.dd"),
                     DateTime = item.dt_txt,
                     Humidity = item.main.humidity,
                     PrecipitationProbability = (int)item.pop * 100,

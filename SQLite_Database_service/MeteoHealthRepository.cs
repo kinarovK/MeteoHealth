@@ -26,6 +26,7 @@ namespace SQLite_Database_service
         public async Task<List<HealthStateModel>> GetHealthStatesAsync()
         {
             return await _context.GetHealthStatesAsync();
+            
         }
         public Task<List<GeolocationModel>> GetGeolocationModelsAsync()
         {

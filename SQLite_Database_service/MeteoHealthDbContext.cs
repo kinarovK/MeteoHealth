@@ -29,7 +29,9 @@ namespace SQLite_Database_service
 
         public async Task<List<HealthStateModel>> GetHealthStatesAsync()
         {
-            return await _connection.Table<HealthStateModel>().ToListAsync();
+            
+            return await _connection.Table<HealthStateModel>().OrderBy(x=> x.Date).ToListAsync();
+
         }
         public Task<int> SaveWeatherModelAsync(List<WeatherModel> model)
         {
@@ -81,7 +83,9 @@ namespace SQLite_Database_service
 
         public async Task<HealthStateModel> GetLastHealthStateModelAsync()
         {
-            return await _connection.Table<HealthStateModel>().OrderByDescending(i => i.Id).FirstOrDefaultAsync();
+            //return await _connection.Table<HealthStateModel>().OrderByDescending(i => i.Date).FirstOrDefaultAsync();
+            var a = await _connection.Table<HealthStateModel>().OrderByDescending(i => i.Date).FirstOrDefaultAsync();
+            return a;
         }
         public async Task<WeatherModel> GetLastWeatherModelAsync()
         {
