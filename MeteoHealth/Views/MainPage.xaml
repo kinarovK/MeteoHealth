@@ -19,7 +19,8 @@
                 
                 <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="300" />
+                <RowDefinition Height="300"  />
+                
                 <RowDefinition Height="200" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="300" />
@@ -28,6 +29,7 @@
                     <RowDefinition Height="300" />
                     <RowDefinition Height="200" />
                     <RowDefinition Height="300" />
+                    
                     <RowDefinition Height="200" />
                     <RowDefinition Height="300" />
                     <RowDefinition Height="200" />
@@ -74,7 +76,8 @@
                     Model="{Binding PressurePlotModel}"
                       Grid.Row="4"
                       Grid.Column="0" 
-                      HorizontalOptions="FillAndExpand" 
+                      HorizontalOptions="FillAndExpand"
+                   
                       VerticalOptions="FillAndExpand" 
                          />
                 <oxy:PlotView x:Name="PressureHealthPlotView"
@@ -136,7 +139,8 @@
                                 Model="{Binding PrecipitationVolPlotModel}"
                       Grid.Row="13"
                       Grid.Column="0" 
-                      HorizontalOptions="FillAndExpand" 
+                      HorizontalOptions="FillAndExpand"
+                     
                       VerticalOptions="FillAndExpand" 
                          />
                 <oxy:PlotView x:Name="PrecipitationVolumeHealthPlotView"

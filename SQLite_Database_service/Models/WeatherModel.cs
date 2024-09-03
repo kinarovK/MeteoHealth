@@ -19,7 +19,7 @@ namespace SQLite_Database_service.Models
 
         //public string description { get; set; }
         [DataType(DataType.DateTime)]
-        public string RequestData { get; set; }
+        public string RequestDate { get; set; }
         public double Temperature { get; set; }
         public double WindSpeed { get; set; }
         public int PrecipitationProbability { get; set; }

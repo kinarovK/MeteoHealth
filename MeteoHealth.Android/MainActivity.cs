@@ -24,7 +24,6 @@ namespace MeteoHealth.Droid
         {
             base.OnCreate(savedInstanceState);
 
-            //Window.DecorView.SystemUiVisibility
             Window.SetStatusBarColor(Android.Graphics.Color.LightGray);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
