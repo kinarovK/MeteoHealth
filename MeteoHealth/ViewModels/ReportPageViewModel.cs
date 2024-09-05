@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Collections.ObjectModel;
 using MeteoHealth.Views;
+using System.Threading;
 
 namespace MeteoHealth.ViewModels
 {
@@ -25,28 +26,30 @@ namespace MeteoHealth.ViewModels
     {
         private readonly IMeteoHealthRepository repo;
         private readonly IReportMaker reportMaker;
+        private readonly CancellationToken cancellationToken;
 
         public ICommand GetReportCommand { get; }
         public ICommand GetReportDetailsCommand { get; }
         public ICommand DeleteAllDataCommand { get; }
         public ICommand OpenAboutReportPageCommand { get; }
-        public ReportPageViewModel(IMeteoHealthRepository repo, IReportMaker reportMaker)
+        public ReportPageViewModel(IMeteoHealthRepository repo, IReportMaker reportMaker, CancellationToken cancellationToken)
         {
             this.repo = repo;
             this.reportMaker = reportMaker;
-            GetReportCommand = new Command(async() =>await GetReport());
+            this.cancellationToken = cancellationToken;
+            GetReportCommand = new Command(async() =>await GetReportAsync(cancellationToken));
             GetReportDetailsCommand = new Command(() => GetReportDetails());
             OpenAboutReportPageCommand = new Command(async () => await OpenAboutReportPageAsync());
-            DeleteAllDataCommand = new Command(async () => await DeleteAllDataAsync());
+            DeleteAllDataCommand = new Command(async () => await DeleteAllDataAsync(cancellationToken));
             listOfPotentionalRelations = new List<ResultModel>();
             listOfPossibleRelations = new List<ResultModel>();
-
+            
 
             PotentialRelationsList = new ObservableCollection<ResultModel>();
             PossibleRelationsList = new ObservableCollection<ResultModel>();
         }
 
-        private async Task OpenAboutReportPageAsync()
+        private async Task OpenAboutReportPageAsync( )
         {
             //await Application.Current.MainPage.Navigation.PushAsync(new AboutReportPage());
             await Application.Current.MainPage.Navigation.PushModalAsync(new AboutReportPage());
@@ -146,14 +149,14 @@ namespace MeteoHealth.ViewModels
             }
         }
         ReportModel reportModel;
-        public async Task GetReport()
+        public async Task GetReportAsync(CancellationToken cancellationToken)
         {
             PotentialRelationsList.Clear();
             listOfPotentionalRelations.Clear();
 
             PossibleRelationsList.Clear();
             listOfPossibleRelations.Clear();
-            var result = await reportMaker.GetReport();
+            var result = await reportMaker.GetReport(cancellationToken );
 
             if (result == null)
             {
@@ -162,7 +165,7 @@ namespace MeteoHealth.ViewModels
             }
             PotentionalRelationshipLabelIsVisible = true;
             PossibleRelationshipLabelIsVisible = true;
-            reportModel = await reportMaker.GetReport();
+            reportModel = await reportMaker.GetReport(cancellationToken);
             IsBiggerThanThresholdValue(reportModel);
             ChangeNaming(ref listOfPotentionalRelations);
             ChangeNaming(ref listOfPossibleRelations);
@@ -272,15 +275,13 @@ namespace MeteoHealth.ViewModels
 
         }
 
-        public async Task DeleteAllDataAsync()
+        public async Task DeleteAllDataAsync(CancellationToken cancellationToken)
         {
             bool answer = await Application.Current.MainPage.DisplayAlert("Confirm Delete", "Are you sure you want to delete all data?", "Yes", "Cancel");
 
             if (answer)
             {
-                await repo.ClearDatabase();
-
-                 
+                await repo.ClearDatabase(cancellationToken);
             }
         }
 

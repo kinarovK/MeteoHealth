@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MeteoHealth.Services
@@ -11,11 +12,13 @@ namespace MeteoHealth.Services
     {
         private readonly IMeteoHealthRepository meteoHealthRepository;
         private readonly INotificationService notificationService;
+     
 
         public ReminderService(IMeteoHealthRepository meteoHealthRepository, INotificationService notificationService) 
         {
             this.meteoHealthRepository = meteoHealthRepository;
             this.notificationService = notificationService;
+ 
         }
 
         public void CallDailyReminder(int hour, int minute)
@@ -25,7 +28,7 @@ namespace MeteoHealth.Services
 
         public async Task<bool> IsTodayHealthStateCheckedAsync()
         {
-            var todayHealthState = await meteoHealthRepository.GetHealthStatesAsync();
+            var todayHealthState = await meteoHealthRepository.GetHealthStatesAsync(CancellationToken.None);
 
             var today = todayHealthState.FirstOrDefault(x => x.Date == DateTime.Today.ToString());
             if (today  == null)

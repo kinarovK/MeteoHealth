@@ -10,6 +10,7 @@ using System.Net.Http;
 using OpenWeatherMap_Api_Service.Interfaces;
 using OpenWeatherMap_Api_Service.Models;
 using System.Threading;
+using System.Net.Sockets;
 
 namespace OpenWeatherMap_Api_Service
 {
@@ -28,17 +29,17 @@ namespace OpenWeatherMap_Api_Service
 
            
         }
-        public async Task<WeatherApiResponse> GetWeatherByCoordinates(string lat, string lon)
+        public async Task<WeatherApiResponse> GetWeatherByCoordinates(string lat, string lon, CancellationToken token)
         {
             fullApi = $"{apiUri}?lat={lat}&lon={lon}&units=metric&appid={apiKey}";
-
+            token.ThrowIfCancellationRequested();
+          
             try
             {
-                using (var response = await client.HttpClient.GetAsync(new Uri(fullApi)))
+                using (var response = await client.HttpClient.GetAsync(new Uri(fullApi), token))
                 {
                     if (response.IsSuccessStatusCode)
                     {
-
                         var json = await response.Content.ReadAsStringAsync();
                         return JsonConvert.DeserializeObject<WeatherApiResponse>(json);
                         
@@ -47,6 +48,7 @@ namespace OpenWeatherMap_Api_Service
 
                 }
             }
+     
             //Handle exception or make some logger service
             catch (Exception ex)
             {
@@ -64,7 +66,7 @@ namespace OpenWeatherMap_Api_Service
                 {
                     if (response.Result.IsSuccessStatusCode)
                     {
-                        
+                       
                         var json = await response.Result.Content.ReadAsStringAsync();
                         var res = JsonConvert.DeserializeObject<WeatherApiResponse>(json);
                     

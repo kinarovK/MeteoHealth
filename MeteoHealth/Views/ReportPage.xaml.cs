@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
@@ -18,11 +19,11 @@ namespace MeteoHealth.Views
     {
         private readonly IMeteoHealthRepository repo;
 
-        public ReportPage(IMeteoHealthRepository repo, IReportMaker reportMaker)
+        public ReportPage(IMeteoHealthRepository repo, IReportMaker reportMaker, CancellationToken cancellationToken)
         {
             InitializeComponent();
             this.repo = repo;
-            BindingContext = new ReportPageViewModel(repo, reportMaker);
+            BindingContext = new ReportPageViewModel(repo, reportMaker, cancellationToken);
             
         }
     }
