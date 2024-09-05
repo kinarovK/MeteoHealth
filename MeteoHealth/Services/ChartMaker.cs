@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using OxyPlot.Xamarin.Forms;
 using SQLite_Database_service.Models;
+using System.Threading;
 
 namespace MeteoHealth.Services
 {
@@ -26,6 +27,7 @@ namespace MeteoHealth.Services
             plotModel.Series.Add(lineSeries);
             plotModels.Add(plotModel);
           
+
             return plotModel;
         }
 
@@ -68,6 +70,7 @@ namespace MeteoHealth.Services
 
         private DateTimeAxis CreateSimpleDateTimeAxisForHealthState()
         {
+
             return new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
@@ -81,6 +84,7 @@ namespace MeteoHealth.Services
                 IsPanEnabled = false,
                 IsZoomEnabled = false
             };
+
         }
         private DateTimeAxis CreateSimpleDateTimeAxisForWeather(string healthDataMinimumDate, string healthDataMaximumDate)
         {

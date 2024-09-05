@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OpenWeatherMap_Api_Service
@@ -16,9 +17,10 @@ namespace OpenWeatherMap_Api_Service
         {
             this.apiRequest = apiRequest;
         }
-        public async Task<WeatherApiResponse> ExecuteApiRequest(string lat, string lon)
+        public async Task<WeatherApiResponse> ExecuteApiRequest(string lat, string lon, CancellationToken token)
         {
-            var apiGetResult = await apiRequest.GetWeatherByCoordinates(lat, lon);
+            token.ThrowIfCancellationRequested();
+            var apiGetResult = await apiRequest.GetWeatherByCoordinates(lat, lon, token);
 
             if (apiGetResult is null)
             {

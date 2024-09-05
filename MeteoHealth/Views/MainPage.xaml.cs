@@ -24,6 +24,7 @@ using Xamarin.Essentials;
 using Microsoft.Extensions.DependencyInjection;
 using MeteoHealth.ViewModels;
 using OpenWeatherMap_Api_Service.Interfaces;
+using System.Threading;
 
 namespace MeteoHealth.Views
 {
@@ -33,12 +34,12 @@ namespace MeteoHealth.Views
         //private readonly IMeteoHealthRepository repo;
 
         private MainPageViewModel viewModel;
-        public MainPage(IMeteoHealthRepository repo, IChartMaker chartMaker, IOpenWeatherMapApiController apiController, IWeatherApiService apiService)
+        public MainPage(IMeteoHealthRepository repo, IChartMaker chartMaker, IOpenWeatherMapApiController apiController, IWeatherApiService apiService, CancellationToken cancellationToken)
         {
             InitializeComponent();
 
         
-            viewModel = new MainPageViewModel(repo, chartMaker, apiController, apiService);
+            viewModel = new MainPageViewModel(repo, chartMaker, apiController, apiService, cancellationToken);
             BindingContext = viewModel;
          
         }

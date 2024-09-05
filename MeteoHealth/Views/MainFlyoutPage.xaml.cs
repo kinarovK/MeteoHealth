@@ -1,4 +1,5 @@
 ﻿using MeteoHealth.Services;
+using Microsoft.Extensions.Primitives;
 using OpenWeatherMap_Api_Service.Interfaces;
 using Report_Service.Interfaces;
 using SQLite_Database_service.Interfaces;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
@@ -23,39 +25,73 @@ namespace MeteoHealth.Views
         private readonly IWeatherApiService apiService;
         private MainPage mainPage;
         private NavigationPage navigationPage;
+        private CancellationTokenSource cancellationTokenSource;
         public MainFlyoutPage (IMeteoHealthRepository repo, IChartMaker chMaker, IReportMaker reportMaker, IOpenWeatherMapApiController apiController, IWeatherApiService apiService)
 		{
-			InitializeComponent ();
+
+            cancellationTokenSource = new CancellationTokenSource();
+            InitializeComponent ();
 			meteoHealthRepository = repo;
 			chartMaker = chMaker;
             this.reportMaker = reportMaker;
             this.apiController = apiController;
             this.apiService = apiService;
-            mainPage = new MainPage(meteoHealthRepository, chartMaker, apiController, apiService);
+            mainPage = new MainPage(meteoHealthRepository, chartMaker, apiController, apiService, cancellationTokenSource.Token);
             navigationPage = new NavigationPage(mainPage);
             Detail = navigationPage;
+
 		}
         internal void OnHomeClicked(object sender, EventArgs e)
+
         {
-            var mainPage = new MainPage(meteoHealthRepository, chartMaker, apiController, apiService);
+            cancellationTokenSource?.Cancel();
+
+            if (cancellationTokenSource.IsCancellationRequested)
+            {
+                //cancellationTokenSource.Dispose();
+                cancellationTokenSource = new CancellationTokenSource();
+            }
+            var mainPage = new MainPage(meteoHealthRepository, chartMaker, apiController, apiService, cancellationTokenSource.Token);
             navigationPage = new NavigationPage(mainPage);
             Detail = navigationPage;
             IsPresented = false;
         }
         private void OnGeolocationClicked(object sender, EventArgs e)
 		{
-			Detail = new NavigationPage(new GeolocationPage(meteoHealthRepository));
+            cancellationTokenSource?.Cancel();
+            if (cancellationTokenSource.IsCancellationRequested)
+            {
+                //cancellationTokenSource.Dispose();
+                cancellationTokenSource = new CancellationTokenSource();
+            }
+
+            Detail = new NavigationPage(new GeolocationPage(meteoHealthRepository, cancellationTokenSource.Token ));
 			IsPresented = false;
 		}
         private void OnAboutClicked(object sender, EventArgs e)
         {
+            cancellationTokenSource?.Cancel();
+
+            if (cancellationTokenSource.IsCancellationRequested)
+            {
+                //cancellationTokenSource.Dispose();
+                cancellationTokenSource = new CancellationTokenSource();
+            }
+
             Detail = new NavigationPage(new AboutPage());
             IsPresented = false;
          
         }
         private void OnReportClicked(object sender, EventArgs e)
         {
-            Detail = new NavigationPage(new ReportPage(meteoHealthRepository, reportMaker));
+            cancellationTokenSource?.Cancel();
+
+            if (cancellationTokenSource.IsCancellationRequested)
+            {
+                //cancellationTokenSource.Dispose();
+                cancellationTokenSource = new CancellationTokenSource();
+            }
+            Detail = new NavigationPage(new ReportPage(meteoHealthRepository, reportMaker, cancellationTokenSource.Token));
             IsPresented = false;
            
         }

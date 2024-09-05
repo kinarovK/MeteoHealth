@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using SQLite_Database_service.Models;
 
@@ -22,14 +23,14 @@ namespace SQLite_Database_service
             _connection.CreateTableAsync<GeolocationModel>();
         }
 
-        public Task<List<WeatherModel>> GetWeatherModelsAsync()
+        public Task<List<WeatherModel>> GetWeatherModelsAsync(CancellationToken cancellationToken)
         {
             return _connection.Table<WeatherModel>().ToListAsync();
         }
 
-        public async Task<List<HealthStateModel>> GetHealthStatesAsync()
+        public async Task<List<HealthStateModel>> GetHealthStatesAsync(CancellationToken cancellationToken)
         {
-            
+            cancellationToken.ThrowIfCancellationRequested();
             return await _connection.Table<HealthStateModel>().OrderBy(x=> x.Date).ToListAsync();
 
         }
@@ -46,22 +47,22 @@ namespace SQLite_Database_service
             int rowsAffected = 0;
             foreach (var item in models)
             {
-                var existingModel =  _connection.Table<WeatherModel>()
-                                            .Where(w=> w.DateTime== item.DateTime).FirstOrDefaultAsync().Result;
+                var existingModel = await _connection.Table<WeatherModel>()
+                                            .Where(w=> w.DateTime== item.DateTime).FirstOrDefaultAsync();
 
                 if (existingModel != null)
                 {
                     item.Id = existingModel.Id;
-                    rowsAffected +=  _connection.UpdateAsync(item).Result;
+                    rowsAffected += await _connection.UpdateAsync(item);
                 }
                 else
                 {
-                    rowsAffected +=  _connection.InsertAsync(item).Result;
+                    rowsAffected += await _connection.InsertAsync(item);
                 }
             }
             return rowsAffected;
         }
-        public Task<int> UpdateWeatherModelAsync(List<WeatherModel> model)
+        public Task<int> UpdateWeatherModelAsync(List<WeatherModel> model )
         {
             return _connection.UpdateAllAsync(model);
         }
@@ -71,39 +72,52 @@ namespace SQLite_Database_service
             return _connection.InsertAsync(model);
         }
 
-        public  Task<List<GeolocationModel>> GetGeolocationModelsAsync()
+        public  Task<List<GeolocationModel>> GetGeolocationModelsAsync(CancellationToken cancellationToken)
         {
-            return  _connection.Table<GeolocationModel>().ToListAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+            return _connection.Table<GeolocationModel>().ToListAsync();
         }
 
-        public async Task<GeolocationModel> GetLastGeolocationModelAsync()
+        public async Task<GeolocationModel> GetLastGeolocationModelAsync(CancellationToken cancellationToken)
         {
+
+            cancellationToken.ThrowIfCancellationRequested();
             return await _connection.Table<GeolocationModel>().OrderByDescending(i => i.Id).FirstOrDefaultAsync();
         }
 
-        public async Task<HealthStateModel> GetLastHealthStateModelAsync()
+        public async Task<HealthStateModel> GetLastHealthStateModelAsync(CancellationToken cancellationToken)
         {
+
+            cancellationToken.ThrowIfCancellationRequested();
             //return await _connection.Table<HealthStateModel>().OrderByDescending(i => i.Date).FirstOrDefaultAsync();
             var a = await _connection.Table<HealthStateModel>().OrderByDescending(i => i.Date).FirstOrDefaultAsync();
             return a;
         }
-        public async Task<WeatherModel> GetLastWeatherModelAsync()
+        public async Task<WeatherModel> GetLastWeatherModelAsync(CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             return await _connection.Table<WeatherModel>().OrderByDescending(i => i.Id).FirstOrDefaultAsync();
         }
 
-        public Task<int> ClearWeatherModelAsync()
+        public Task<int> ClearWeatherModelAsync(CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             return _connection.DeleteAllAsync<WeatherModel>();
         }
 
-        public Task<int> ClearHealthStateModelAsync()
+        public Task<int> ClearHealthStateModelAsync(CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             return _connection.DeleteAllAsync<HealthStateModel>();
         }
 
-        public Task<int> ClearGeolocationModelAsync()
+        public Task<int> ClearGeolocationModelAsync(CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             return _connection.DeleteAllAsync<GeolocationModel>();
         }
 

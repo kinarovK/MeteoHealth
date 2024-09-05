@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.CommunityToolkit.Extensions;
@@ -178,25 +179,56 @@ namespace MeteoHealth.ViewModels
             }
         }
         //CTOR
-        public MainPageViewModel(IMeteoHealthRepository meteoHealthRepository, IChartMaker chartMaker, IOpenWeatherMapApiController apiController, IWeatherApiService apiService)
+        public MainPageViewModel(IMeteoHealthRepository meteoHealthRepository, IChartMaker chartMaker, IOpenWeatherMapApiController apiController, IWeatherApiService apiService, CancellationToken cancellationToken)
         {
             _meteoHealthRepository = meteoHealthRepository;
             this.chartmaker = chartMaker;
             this.apiController = apiController;
             this.apiService = apiService;
-            //ShowhealthPopupCommand = new Command(async () => await ShowHealthPopupAsync());
-            //ShowAboutPageCommand = new Command(async () => await ShowAboutPage());
-            //ShowGeolocationCommand = new Command(async () => await ShowGeoLocationPage());
+            this.cancellationToken = cancellationToken;
         }
-        //internal async Task InitializeAsync()
-        //{
-        //    await OnApperering();
-        //    //await InitializeChartsAsync();
-        //}
-        public async Task InitializeChartsAsync()
+        private CancellationToken cancellationToken;
+
+        public async Task OnApperering()
         {
-            var weatherData = await _meteoHealthRepository.GetWeatherModelAsync(); 
-            var healthState = await _meteoHealthRepository.GetHealthStatesAsync();
+
+            IsLoading = true;
+            //remove try
+            try
+            {
+                //await Task.Delay(5000);
+             
+
+                await CheckHealthState(cancellationToken);
+                await CheckGeolocation(cancellationToken);
+                await CheckWeather(cancellationToken);
+                await InitializeChartsAsync(cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                //Operration in current page cancelled, going to next page
+
+                await Application.Current.MainPage.DisplayAlert("Cancelled", "Operation cancelled", "Ok");
+            }
+           
+            catch (Exception ex)
+            {
+                var em = ex.Message;
+                await Application.Current.MainPage.DisplayAlert("Ooops", "Something went wrong try again letter", "OK");
+
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+
+
+        }
+        public async Task InitializeChartsAsync(CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+            var weatherData = await _meteoHealthRepository.GetWeatherModelAsync(cancellationToken); 
+            var healthState = await _meteoHealthRepository.GetHealthStatesAsync(cancellationToken);
 
 
             //var weatherData = CreateMockWeatherModels();
@@ -285,42 +317,21 @@ namespace MeteoHealth.ViewModels
 
         }
         #endregion
-        public async Task OnApperering()
+       
+        internal async Task CheckGeolocation(CancellationToken token)
         {
-            IsLoading = true;
-            //remove try
-            try
-            {
-                await CheckHealthState();
-                await CheckGeolocation();
-                await CheckWeather();
-                await InitializeChartsAsync();
-            }
-            catch (Exception ex)
-            {
-                var em = ex.Message;
-                await Application.Current.MainPage.DisplayAlert("Ooops", "Something went wrong try again letter", "OK");
-
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-
-
-        }
-        internal async Task CheckGeolocation()
-        {
-            var geolocation = await _meteoHealthRepository.GetGeolocationModelsAsync();
+            var geolocation = await _meteoHealthRepository.GetGeolocationModelsAsync(cancellationToken);
+            await Task.Delay(5000);
 
             if (geolocation.Count == 0)
             {
+                token.ThrowIfCancellationRequested();
 
                 await Application.Current.MainPage.DisplayAlert("Ooops", "Not found geolocation, please set it", "OK");
 
                 var tcs = new TaskCompletionSource<bool>();
 
-                var geolocationPage = new GeolocationPage(_meteoHealthRepository);
+                var geolocationPage = new GeolocationPage(_meteoHealthRepository, cancellationToken);
 
                 geolocationPage.Disappearing += (sender, e) => tcs.SetResult(true);
 
@@ -333,14 +344,16 @@ namespace MeteoHealth.ViewModels
                 
             }
         }
-        internal async Task CheckWeather()
+        internal async Task CheckWeather(CancellationToken token)
         {
+          
 
-            var weathers = await _meteoHealthRepository.GetLastWeatherModelAsync(); //or maybe get last 
-            if (weathers == null || DateTime.Parse(weathers.RequestDate) != DateTime.Today)//exception here
+            token.ThrowIfCancellationRequested();
+            var weathers = await _meteoHealthRepository.GetLastWeatherModelAsync(cancellationToken); //or maybe get last 
+            if (weathers == null || DateTime.Parse(weathers.RequestDate) != DateTime.Today.AddDays(30))//exception here
             {
-                var geolocation = await _meteoHealthRepository.GetLastGeolocationModelAsync(); //get just last
-                WeatherApiResponse apiResult =await apiController.ExecuteApiRequest(geolocation.Latitude.ToString(), geolocation.Longitude.ToString());
+                var geolocation = await _meteoHealthRepository.GetLastGeolocationModelAsync(cancellationToken); //get just last
+                WeatherApiResponse apiResult =await apiController.ExecuteApiRequest(geolocation.Latitude.ToString(), geolocation.Longitude.ToString(), token);
                 if (apiResult != null)
                 {
                     await _meteoHealthRepository.UpsertWeatherModelAsync(apiService.ConvertToModel(apiResult));
@@ -351,7 +364,8 @@ namespace MeteoHealth.ViewModels
                     bool answer = await Application.Current.MainPage.DisplayAlert("Ooops", "Your internet connection blabla, check your internet connection or try letter", "Try again", "Cancel");
                     if (answer)
                     {
-                        await CheckWeather();
+                        //if (!token.IsCancellationRequested)
+                        await CheckWeather(token);
                     }
                 }
             }
@@ -366,10 +380,10 @@ namespace MeteoHealth.ViewModels
 
 
 
-        internal async Task CheckHealthState()// 
+        internal async Task CheckHealthState(CancellationToken token)// 
         {
             
-            var healthStates =  await _meteoHealthRepository.GetHealthStatesAsync();
+            var healthStates =  await _meteoHealthRepository.GetHealthStatesAsync(cancellationToken);
             var healthStateDate = DateTime.Today;
             if (healthStates.Count == 0)
             {

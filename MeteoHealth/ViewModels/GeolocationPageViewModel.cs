@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Essentials;
@@ -20,20 +21,22 @@ namespace MeteoHealth.ViewModels
     internal class GeolocationPageViewModel : INotifyPropertyChanged
     {
         private readonly IMeteoHealthRepository meteoHealthRepository;
+        private readonly CancellationToken cancellationToken;
         private readonly Geocoder geocoder;
         public ICommand HandleMapClickedCommand { get; }
         public ICommand GetCurrentLocationCommand { get; }
-        public GeolocationPageViewModel(IMeteoHealthRepository meteoHealthRepository)
+        public GeolocationPageViewModel(IMeteoHealthRepository meteoHealthRepository, CancellationToken cancellationToken)
         {
             this.meteoHealthRepository = meteoHealthRepository;
+            this.cancellationToken = cancellationToken;
             geocoder = new Geocoder();
             MapClickedCommand = new Command<MapClickedEventArgs>(async e => await MapClickedAsync(e.Position));
             GetLocationCommand = new Command(async () => await GetLocationAsync());
 
             HandleMapClickedCommand = new Command<Position>(async pos => await HandleMapClickedAsync(pos));
-            GetCurrentLocationCommand = new Command(async () => await GetCurrentLocationAsync());
+            //GetCurrentLocationCommand = new Command(async () => await GetCurrentLocationAsync(cancellationToken));
         }
-        private async Task HandleMapClickedAsync(Position position)
+        private async Task HandleMapClickedAsync(Position position )
         {
             if (!await ShowConfirmationDialog(position))
             {
@@ -42,6 +45,8 @@ namespace MeteoHealth.ViewModels
 
             try
             {
+
+                await Task.Delay(3000);
                 // Save the geolocation
                 await meteoHealthRepository.SaveGeolocationModelAsync(new GeolocationModel
                 {
@@ -53,37 +58,39 @@ namespace MeteoHealth.ViewModels
                 // Optionally update the label or other UI elements here
                 GeoLabel = $"Lat: {position.Latitude}, Long: {position.Longitude}";
             }
+       
             catch (Exception ex)
             {
                 await Application.Current.MainPage.DisplayAlert("Error", $"An unexpected error occurred: {ex.Message}", "OK");
             }
+          
         }
 
-        private async Task GetCurrentLocationAsync()
-        {
-            try
-            {
-                var result = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Low, TimeSpan.FromSeconds(10)));
+        //private async Task GetCurrentLocationAsync(CancellationToken cancellationToken)
+        //{
+        //    try
+        //    {
+        //        var result = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Low, TimeSpan.FromSeconds(10)));
 
-                if (result != null)
-                {
-                    var addresses = await geocoder.GetAddressesForPositionAsync(new Position(result.Latitude, result.Longitude));
-                    GeoLabel = addresses.FirstOrDefault()?.ToString();
+        //        if (result != null)
+        //        {
+        //            var addresses = await geocoder.GetAddressesForPositionAsync(new Position(result.Latitude, result.Longitude));
+        //            GeoLabel = addresses.FirstOrDefault()?.ToString();
 
-                    await meteoHealthRepository.SaveGeolocationModelAsync(new GeolocationModel
-                    {
-                        DateTime = DateTime.Now.ToString(),
-                        Latitude = result.Latitude,
-                        Longitude = result.Longitude
-                    });
-                }
+        //            await meteoHealthRepository.SaveGeolocationModelAsync(new GeolocationModel
+        //            {
+        //                DateTime = DateTime.Now.ToString(),
+        //                Latitude = result.Latitude,
+        //                Longitude = result.Longitude
+        //            });
+        //        }
 
-            }
-            catch (Exception ex)
-            {
-                await Application.Current.MainPage.DisplayAlert("Error", $"An unexpected error occurred: {ex.Message}", "OK");
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await Application.Current.MainPage.DisplayAlert("Error", $"An unexpected error occurred: {ex.Message}", "OK");
+        //    }
+        //}
 
         //private async Task<bool> ShowConfirmationDialog(Position pos)
         //{
@@ -101,13 +108,19 @@ namespace MeteoHealth.ViewModels
             {
                 return;
             }
-
+     
             try
             {
+             
                 GeoLabel = $"Lat: {position.Latitude}, Long: {position.Longitude}";
                 await Application.Current.MainPage.DisplayAlert("Coordinates", GeoLabel, "OK");
 
 
+            }
+            catch (OperationCanceledException)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "Cancelled", "OK");
+                //OperationCancelled
             }
             catch (FeatureNotEnabledException)
             {
@@ -127,9 +140,10 @@ namespace MeteoHealth.ViewModels
             try
             {
                 var result = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Lowest, TimeSpan.FromSeconds(10)));
-
+               
                 if (result != null)
                 {
+                   
                     var addresses = await geocoder.GetAddressesForPositionAsync(new Position(result.Latitude, result.Longitude));
                     GeoLabel = addresses.FirstOrDefault().ToString();
 
@@ -152,6 +166,7 @@ namespace MeteoHealth.ViewModels
             {
                 await Application.Current.MainPage.DisplayAlert("Permission Denied", "Location permission is denied. Please grant permission to use this feature.", "OK");
             }
+         
             catch (Exception ex)
             {
                 await Application.Current.MainPage.DisplayAlert("Error", $"An unexpected error occurred: {ex.Message}", "OK");

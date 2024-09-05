@@ -4,6 +4,7 @@ using SQLite_Database_service.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -14,7 +15,7 @@ namespace MeteoHealth.ViewModels
     {
         private double _healthLevel;
         private readonly DateTime date;
-
+        
         private readonly IMeteoHealthRepository _meteoHealthRepository;
 
         public double HealthLevel
@@ -34,6 +35,7 @@ namespace MeteoHealth.ViewModels
         {
             _meteoHealthRepository = meteoHealthRepository;
             this.date = date;
+          
             HealthLevel = 3;
             SaveCommand = new Command(async () => await OnSave());
         }

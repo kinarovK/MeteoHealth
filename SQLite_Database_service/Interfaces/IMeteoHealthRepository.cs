@@ -4,27 +4,28 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SQLite_Database_service.Interfaces
 {
     public interface IMeteoHealthRepository
     {
-        public Task<List<WeatherModel>> GetWeatherModelAsync();
-        public Task<List<HealthStateModel>> GetHealthStatesAsync();
+        public Task<List<WeatherModel>> GetWeatherModelAsync(CancellationToken cancellationToken);
+        public Task<List<HealthStateModel>> GetHealthStatesAsync(CancellationToken cancellationToken);
         public Task<int> SaveWeatherModelAsync(List<WeatherModel> model);
         public Task<int> SaveHealtStateModel(HealthStateModel model);
         public Task<int> UpdateWeatherModelAsync(List<WeatherModel> model);
-        public Task<int> UpsertWeatherModelAsync(List<WeatherModel> models);
+        public Task<int> UpsertWeatherModelAsync(List<WeatherModel> models );
         public Task<int> SaveGeolocationModelAsync(GeolocationModel model);
-        public  Task<List<GeolocationModel>> GetGeolocationModelsAsync();
-        public  Task<GeolocationModel> GetLastGeolocationModelAsync();
+        public  Task<List<GeolocationModel>> GetGeolocationModelsAsync(CancellationToken cancellationToken);
+        public  Task<GeolocationModel> GetLastGeolocationModelAsync(CancellationToken cancellationToken);
 
-        public Task<WeatherModel> GetLastWeatherModelAsync();
-        public Task<HealthStateModel> GetLastHealthStateModelAsync();
+        public Task<WeatherModel> GetLastWeatherModelAsync(CancellationToken cancellationToken);
+        public Task<HealthStateModel> GetLastHealthStateModelAsync(CancellationToken cancellationToken);
 
 
-        public Task ClearDatabase();
+        public Task ClearDatabase(CancellationToken cancellationToken);
       
 
     }
