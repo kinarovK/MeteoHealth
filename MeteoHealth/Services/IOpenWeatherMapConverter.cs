@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MeteoHealth.Services
 {
-    public interface IWeatherApiService
+    public interface IOpenWeatherMapConverter
     {
         public List<WeatherModel> ConvertToModel(WeatherApiResponse response);
     }

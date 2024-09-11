@@ -2,43 +2,63 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MeteoHealth.Views.ReportPage"
-             xmlns:viewmodels="clr-namespace:MeteoHealth.ViewModels" x:DataType="viewmodels:ReportPageViewModel"
+             xmlns:viewmodels="clr-namespace:MeteoHealth.ViewModels" xmlns:viewmodels1="clr-namespace:MeteoHealth.ViewModels.Models" x:DataType="viewmodels:ReportPageViewModel"
              Title="Report">
              
    
                 
     <ContentPage.Content>
         <StackLayout>
-            <Button Text="Delete all data" BackgroundColor="Red" TextColor="Wheat" Command="{Binding DeleteAllDataCommand}"/>
+            
             <ImageButton Source="Info_icon.png"
                          WidthRequest="30"
                          HeightRequest="30"
                          BackgroundColor="Transparent"
+                         HorizontalOptions="End"
+                         Margin="5, 10"
                          Command="{Binding OpenAboutReportPageCommand}"/>
-            <Button Text="Create report" Command="{Binding GetReportCommand}"/>
+            
+            <Grid HorizontalOptions="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <Button Grid.Column="0" Text="Create report" Margin="0" CornerRadius="20" Command="{Binding GetReportCommand}"/>
+                <Button Grid.Column="1" Text="Get Report details" Margin="0" CornerRadius="20" Command="{Binding GetReportDetailsCommand}" IsEnabled="{Binding IsGetDetailReportButtonEnabled}" >
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding IsGetDetailReportButtonEnabled}" Value="false">
+                            <Setter Property="BackgroundColor" Value="Gray"/>
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+                
+            </Grid>
 
-            <Label Text="{Binding ReportPeriod}"/>
-            <Label Text="Potentional Relationship with: " IsVisible="{Binding PotentionalRelationshipLabelIsVisible}"/>
-            <ListView ItemsSource="{Binding PotentialRelationsList}">
+
+            <Label Text="Potentional Relationship with: " Margin="10" IsVisible="{Binding IsRelationshipListVisible}"/>
+            <ListView ItemsSource="{Binding PotentialRelationsList}" SelectionMode="None">
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="viewmodels:ResultModel">
+                    <DataTemplate x:DataType="viewmodels1:ResultModel" >
                         <TextCell TextColor="Black" Text="{Binding Name}"/>
                     </DataTemplate> 
                 </ListView.ItemTemplate>
             </ListView>
-            <Label Text="Possible Relationship with: " IsVisible="{Binding PossibleRelationshipLabelIsVisible}"/>
-            <ListView ItemsSource="{Binding PossibleRelationsList}">
+            <Label Text="Possible Relationship with: "  Margin ="10" IsVisible="{Binding IsRelationshipListVisible}"/>
+            <ListView ItemsSource="{Binding PossibleRelationsList}" SelectionMode="None" >
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="viewmodels:ResultModel">
+                    <DataTemplate x:DataType="viewmodels1:ResultModel">
                         <TextCell TextColor="Black" Text="{Binding Name}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <Button Text="Get Report details" Command="{Binding GetReportDetailsCommand}" IsVisible="{Binding IsGetDetailReportButtonVisible}" />
+           
             <Label Text="{Binding ReportPeriod}"/>
             <ListView ItemsSource="{Binding DetailedReportList}">
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="viewmodels:ResultModel">
+                    <DataTemplate x:DataType="viewmodels1:ResultModel">
                         <ViewCell>
                             <Grid Padding="10">
                                 <Grid.ColumnDefinitions>
@@ -59,6 +79,8 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <Button Text="Delete all data" BackgroundColor="Red" Margin="120,0,120,10" WidthRequest="100" CornerRadius="20" VerticalOptions="End" TextColor="Wheat" Command="{Binding DeleteAllDataCommand}"/>
+
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

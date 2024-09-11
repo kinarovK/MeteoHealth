@@ -29,6 +29,7 @@ namespace MeteoHealth.ViewModels
             {
                 _healthLevel = value; 
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(Emoji));
             } 
         }
         public HealthStatePopupViewModel(IMeteoHealthRepository meteoHealthRepository, DateTime date)
@@ -50,7 +51,23 @@ namespace MeteoHealth.ViewModels
 
             await _meteoHealthRepository.SaveHealtStateModel(model);
             MessagingCenter.Send(this, "ClosePopup"); //System.Reflection.TargetInvocationException: 'Exception has been thrown by the target of an invocation.'
-
         }
+
+        public string Emoji
+        {
+            get
+            {
+                switch (HealthLevel)
+                {
+                    case 1: return "😞";
+                    case 2: return "😐";
+                    case 3: return "🙂";
+                    case 4: return "😃";
+                    case 5: return "😁";
+                    default: return "🙂";
+                }
+            }
+        }
+
     }
 }

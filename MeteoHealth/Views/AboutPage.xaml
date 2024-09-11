@@ -9,18 +9,60 @@
         <vm:AboutViewModel />
     </ContentPage.BindingContext>
 
-
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="About MeteoHealth"
+        <ScrollView Padding="0">
+
+            <StackLayout>
+                <Label Text="About MeteoHealth"
                 VerticalOptions="Start"  
                 HorizontalOptions="CenterAndExpand" 
                    FontSize="Large"/>
-            <Label Text="The purpose of the application is to find out whether you are sensitive to weather factors or to changes in weather factors. The application needs location data and internet access to perform the analysis. Knowing the location, it retrieves weather data on a daily basis which is referenced to the location set. For the analysis, you need to fill in a daily health score (where the higher the score, the more painful or worse you feel). If you have enough data, you can also run a query on the Report page. "
+                <Label Text="The purpose of the application is to determine if you are sensitive to weather factors or changes in weather conditions. The application requires location data and internet access to perform the analysis. By using your location, it retrieves daily weather data relevant to your set location. For the analysis, you need to enter a daily health score, where a higher score indicates more pain or a worse condition. Once you have collected sufficient data, you can run a query on the Report page. "
 
                    HorizontalTextAlignment="Start"
                    FontSize="Medium"/>
-           
-        </StackLayout>
+                <Label Text="About app components:"
+                 FontSize="Large"
+                 FontAttributes="Bold"
+                />
+                <Label Text="Home page:"
+                 FontSize="Medium"
+                TextColor="DarkGray"
+                 FontAttributes="Bold"      
+                />
+                <Label
+                Text="On this page you will find diagrams that visually reflect the different weather parameters and the state of well-being, which can be visually compared. For each parameter there is a separate chart with Health state attached. "
+                />
+                <Image Source="HomePage_Screen.jpg" 
+                   WidthRequest="300"
+                   />
+                <Label Text="Geolocation Page:"
+                 FontSize="Medium"
+                TextColor="DarkGray"
+                 FontAttributes="Bold"      
+                />
+                <Label Text="On this page you can set and edit your position. This is necessary to retrieve the weather parameters for your current location. You have two options for setting your location. You have the option to select any point on the map. To use your current location, click on the Use Current Location button."
+                       
+                       />
+                <Label Text="About Page:"
+                 FontSize="Medium"
+                TextColor="DarkGray"
+                 FontAttributes="Bold"      
+                />
+                <Label Text="Here you are now"/>
+                <Label Text="Report Page:"
+                 FontSize="Medium"
+                TextColor="DarkGray"
+                 FontAttributes="Bold"      
+                />
+                <Label Text="On that page you can see if there is a statistical relationship between your well-being and the weather parameters. In order to be able to generate a summary, you need to fill in your health state status at least 10 times. 
+If there is a statistical relationship with a parameter, a list of those with a strong or possible relationship will appear. If the statistical calculation does not find a link, you will be notified. "/>
+                <Image Source="Report_Screen.jpg" 
+                   WidthRequest="300"
+                   />
+                <Label Text="After the query, you can also request the details of the summary, these details reflect the results of the statistical calculations. " />
+            </StackLayout>
+        </ScrollView>
+
     </ContentPage.Content>
 </ContentPage>

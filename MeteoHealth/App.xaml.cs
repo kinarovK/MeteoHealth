@@ -32,11 +32,12 @@ namespace MeteoHealth
             var weatherApi = ServiceProvider.GetRequiredService<IOpenWeatherMapApiController>();
             var chart = ServiceProvider.GetRequiredService<IChartMaker>();
             var reportMaker = ServiceProvider.GetRequiredService<IReportMaker>();
-            var apiService = ServiceProvider.GetRequiredService<IWeatherApiService>();
+            var apiService = ServiceProvider.GetRequiredService<IOpenWeatherMapConverter>();
 
             Application.Current.MainPage = new MainFlyoutPage(db, chart, reportMaker, weatherApi, apiService)
             {
                 Title = "Menu"
+
             };
 
         }
@@ -51,7 +52,7 @@ namespace MeteoHealth
 
             services.AddScoped<IChartMaker, ChartMaker>();
             services.AddScoped<IReminderService, ReminderService>();
-            services.AddScoped<IWeatherApiService, WeatherApiService>();
+            services.AddScoped<IOpenWeatherMapConverter, OpenWeatherMapConverter>();
             services.DependencyRegistrationForReport();
             services.AddTransient<MainPageViewModel>();
             services.AddTransient<MainPage>();

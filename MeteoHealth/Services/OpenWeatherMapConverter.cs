@@ -6,11 +6,11 @@ using System.Text;
 
 namespace MeteoHealth.Services
 {
-    public class WeatherApiService : IWeatherApiService //maybe naming not to good
+    public class OpenWeatherMapConverter : IOpenWeatherMapConverter 
     {
         
-        //maybe make it async
-        public List<WeatherModel> ConvertToModel(WeatherApiResponse response) //Add Some custom exception 
+       
+        public List<WeatherModel> ConvertToModel(WeatherApiResponse response) 
         {
             var result = new List<WeatherModel>();
 

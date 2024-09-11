@@ -13,13 +13,7 @@ namespace MeteoHealth.Droid
     [Activity(Label = "MeteoHealth", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        ////const int RequestLocationId = 0;
-        //////optiona? need i this? 
-        ////readonly string[] LocationPermissions =
-        ////{
-        ////    Manifest.Permission.AccessCoarseLocation,
-        ////    Manifest.Permission.AccessFineLocation
-        ////};
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);

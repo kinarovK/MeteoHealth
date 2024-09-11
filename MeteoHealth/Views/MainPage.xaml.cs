@@ -16,7 +16,6 @@ using OpenWeatherMap_Api_Service.Models;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
-using MeteoHealth.Models;
 using MeteoHealth.Services;
 using OxyPlot.Xamarin.Forms;
 
@@ -34,7 +33,7 @@ namespace MeteoHealth.Views
         //private readonly IMeteoHealthRepository repo;
 
         private MainPageViewModel viewModel;
-        public MainPage(IMeteoHealthRepository repo, IChartMaker chartMaker, IOpenWeatherMapApiController apiController, IWeatherApiService apiService, CancellationToken cancellationToken)
+        public MainPage(IMeteoHealthRepository repo, IChartMaker chartMaker, IOpenWeatherMapApiController apiController, IOpenWeatherMapConverter apiService, CancellationToken cancellationToken)
         {
             InitializeComponent();
 

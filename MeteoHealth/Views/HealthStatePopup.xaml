@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              x:Class="MeteoHealth.Views.HealthStatePopup"
-           Size="300, 300"
+           Size="300, 200"
            IsLightDismissEnabled="False"
            >
 
@@ -17,8 +17,8 @@
                 ValueChanged="StateSlider_ValueChanged"
                 
                 />
-        <Label x:Name="SliderValue" FontSize="120" Text="{Binding HealthLevel}" />
-        <Button x:Name="SetButton" Text="Ok" Command="{Binding SaveCommand}" />
+        <Label x:Name="SliderValue" FontSize="40" Text="{Binding Emoji}"  HorizontalOptions="Center" VerticalOptions="Center" />
+        <Button x:Name="SetButton" Margin="30, 40, 30, 30" CornerRadius="20" Text="Ok" Command="{Binding SaveCommand}" />
        
     </StackLayout>
         

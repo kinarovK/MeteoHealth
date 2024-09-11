@@ -14,7 +14,7 @@ namespace MeteoHealth.Services
     internal class ChartMaker : IChartMaker
     {
         private bool isSync;
-        private List<PlotModel> plotModels = new List<PlotModel>();
+        private readonly List<PlotModel> plotModels = new List<PlotModel>();
         public PlotModel CreateHealthChar(List<HealthStateModel> healthData, string yAxisTitle, string dataFieldName)
         { 
 
@@ -35,9 +35,7 @@ namespace MeteoHealth.Services
         {
             var lineSeries = new LineSeries
             {
-                MarkerType = MarkerType.Circle,
-                MarkerSize = 4,
-                MarkerStroke = OxyColors.Yellow,
+                
                 LineStyle = LineStyle.Solid,
                 Smooth = true,
                 Color = OxyColors.Red,
@@ -103,7 +101,6 @@ namespace MeteoHealth.Services
             {
                 Position = AxisPosition.Bottom,
                 StringFormat = "yyyy-MM-dd",
-                //Title = "Date"
                 IntervalType = DateTimeIntervalType.Days,
                 MajorStep = 1,
                 MajorGridlineStyle = LineStyle.Solid,
@@ -120,7 +117,12 @@ namespace MeteoHealth.Services
         {
             return new DateTimeAxis
             {
-          
+              
+                MajorStep = 1,
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineStyle = LineStyle.Dot,
+                Angle = 90,
+              
                 IsPanEnabled = true,
                 Minimum = (DateTimeAxis.ToDouble(DateTime.Parse(minimumDate))),
                 Maximum = DateTimeAxis.ToDouble(DateTime.Parse(maximumDate)),
@@ -225,7 +227,6 @@ namespace MeteoHealth.Services
             DateTimeAxis dateTimeAxis;
             if (newCol.Count <= 33)
             {
-                //dateTimeAxis = CreateSimpleDateTimeAxisForHealthState();
                 dateTimeAxis = CreateSimpleDateTimeAxisForWeather(healthData.First().Date, healthData.Last().Date);
             }
             else
