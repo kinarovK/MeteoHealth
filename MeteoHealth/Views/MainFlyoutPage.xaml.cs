@@ -22,11 +22,11 @@ namespace MeteoHealth.Views
 		private readonly IChartMaker chartMaker;
         private readonly IReportMaker reportMaker;
         private readonly IOpenWeatherMapApiController apiController;
-        private readonly IWeatherApiService apiService;
+        private readonly IOpenWeatherMapConverter apiService;
         private MainPage mainPage;
         private NavigationPage navigationPage;
         private CancellationTokenSource cancellationTokenSource;
-        public MainFlyoutPage (IMeteoHealthRepository repo, IChartMaker chMaker, IReportMaker reportMaker, IOpenWeatherMapApiController apiController, IWeatherApiService apiService)
+        public MainFlyoutPage (IMeteoHealthRepository repo, IChartMaker chMaker, IReportMaker reportMaker, IOpenWeatherMapApiController apiController, IOpenWeatherMapConverter apiService)
 		{
 
             cancellationTokenSource = new CancellationTokenSource();
@@ -37,7 +37,10 @@ namespace MeteoHealth.Views
             this.apiController = apiController;
             this.apiService = apiService;
             mainPage = new MainPage(meteoHealthRepository, chartMaker, apiController, apiService, cancellationTokenSource.Token);
-            navigationPage = new NavigationPage(mainPage);
+            navigationPage = new NavigationPage(mainPage)
+            {
+                BarBackgroundColor = Color.FromHex("#298c86"), BarTextColor= Color.White
+            };
             Detail = navigationPage;
 
 		}
@@ -52,7 +55,11 @@ namespace MeteoHealth.Views
                 cancellationTokenSource = new CancellationTokenSource();
             }
             var mainPage = new MainPage(meteoHealthRepository, chartMaker, apiController, apiService, cancellationTokenSource.Token);
-            navigationPage = new NavigationPage(mainPage);
+            navigationPage = new NavigationPage(mainPage)
+            {
+                BarBackgroundColor = Color.FromHex("#298c86"),
+                BarTextColor = Color.White
+            };
             Detail = navigationPage;
             IsPresented = false;
         }
@@ -65,7 +72,11 @@ namespace MeteoHealth.Views
                 cancellationTokenSource = new CancellationTokenSource();
             }
 
-            Detail = new NavigationPage(new GeolocationPage(meteoHealthRepository, cancellationTokenSource.Token ));
+            Detail = new NavigationPage(new GeolocationPage(meteoHealthRepository))
+            {
+                BarBackgroundColor = Color.FromHex("#298c86"),
+                BarTextColor = Color.White
+            };
 			IsPresented = false;
 		}
         private void OnAboutClicked(object sender, EventArgs e)
@@ -78,7 +89,7 @@ namespace MeteoHealth.Views
                 cancellationTokenSource = new CancellationTokenSource();
             }
 
-            Detail = new NavigationPage(new AboutPage());
+            Detail = new NavigationPage(new AboutPage()) { BarBackgroundColor = Color.FromHex("#298c86"), BarTextColor = Color.White };
             IsPresented = false;
          
         }
@@ -91,7 +102,8 @@ namespace MeteoHealth.Views
                 //cancellationTokenSource.Dispose();
                 cancellationTokenSource = new CancellationTokenSource();
             }
-            Detail = new NavigationPage(new ReportPage(meteoHealthRepository, reportMaker, cancellationTokenSource.Token));
+            Detail = new NavigationPage(new ReportPage(meteoHealthRepository, reportMaker, cancellationTokenSource.Token)) 
+            { BarBackgroundColor = Color.FromHex("#298c86"), BarTextColor = Color.White };
             IsPresented = false;
            
         }

@@ -34,8 +34,8 @@ namespace OpenWeatherMap_Api_Service
             fullApi = $"{apiUri}?lat={lat}&lon={lon}&units=metric&appid={apiKey}";
             token.ThrowIfCancellationRequested();
           
-            try
-            {
+            //try
+            //{
                 using (var response = await client.HttpClient.GetAsync(new Uri(fullApi), token))
                 {
                     if (response.IsSuccessStatusCode)
@@ -47,43 +47,15 @@ namespace OpenWeatherMap_Api_Service
                     return null;
 
                 }
-            }
-     
-            //Handle exception or make some logger service
-            catch (Exception ex)
-            {
+            //}
+            ////TaskCancelledException
+            ////Handle exception or make some logger service
+            //catch (Exception ex)
+            //{
 
-                return null;
-            }
+            //    return null;
+            //}
         }
-        public async Task<WeatherApiResponse> GetWeatherByCity(string city)
-        {
-            fullApi = $"{apiUri}?q={city}&units=metric&appid={apiKey}";
-
-            try
-            {
-                using (var response =  client.HttpClient.GetAsync(new Uri(fullApi)))
-                {
-                    if (response.Result.IsSuccessStatusCode)
-                    {
-                       
-                        var json = await response.Result.Content.ReadAsStringAsync();
-                        var res = JsonConvert.DeserializeObject<WeatherApiResponse>(json);
-                    
-
-                        var some = res;
-                   
-                        return res;
-                    }
-                    return null;
-
-                }
-            }
-            catch (Exception ex)
-            {
-
-                return null;
-            }
-        }
+  
     }
 }

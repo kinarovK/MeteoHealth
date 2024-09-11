@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -21,12 +22,12 @@ using Xamarin.Forms;
 
 namespace MeteoHealth.ViewModels
 {
-    public class MainPageViewModel : INotifyPropertyChanged
+    public class MainPageViewModel : BaseViewModel //INotifyPropertyChanged
     {
         private readonly IMeteoHealthRepository _meteoHealthRepository;
         private readonly IChartMaker chartmaker;
         private readonly IOpenWeatherMapApiController apiController;
-        private readonly IWeatherApiService apiService;
+        private readonly IOpenWeatherMapConverter apiService;
         //Temperature
         private PlotModel _temperaturePlotModel;
         public PlotModel TemperaturePlotModel
@@ -179,7 +180,7 @@ namespace MeteoHealth.ViewModels
             }
         }
         //CTOR
-        public MainPageViewModel(IMeteoHealthRepository meteoHealthRepository, IChartMaker chartMaker, IOpenWeatherMapApiController apiController, IWeatherApiService apiService, CancellationToken cancellationToken)
+        public MainPageViewModel(IMeteoHealthRepository meteoHealthRepository, IChartMaker chartMaker, IOpenWeatherMapApiController apiController, IOpenWeatherMapConverter apiService, CancellationToken cancellationToken)
         {
             _meteoHealthRepository = meteoHealthRepository;
             this.chartmaker = chartMaker;
@@ -193,28 +194,32 @@ namespace MeteoHealth.ViewModels
         {
 
             IsLoading = true;
-            //remove try
             try
             {
-                //await Task.Delay(5000);
-             
 
                 await CheckHealthState(cancellationToken);
                 await CheckGeolocation(cancellationToken);
                 await CheckWeather(cancellationToken);
                 await InitializeChartsAsync(cancellationToken);
             }
+        
+            catch (HttpRequestException)
+            {
+                bool answer = await Application.Current.MainPage.DisplayAlert("Ooops", "Your internet connection is weak or missing. Please check your connection or try again later.", "Try again", "Cancel");
+                if (answer)
+                {
+                    await CheckWeather(cancellationToken);
+                }
+            }
             catch (OperationCanceledException)
             {
                 //Operration in current page cancelled, going to next page
 
-                await Application.Current.MainPage.DisplayAlert("Cancelled", "Operation cancelled", "Ok");
+                //await Application.Current.MainPage.DisplayAlert("Cancelled", "Operation cancelled", "Ok");
             }
-           
             catch (Exception ex)
             {
-                var em = ex.Message;
-                await Application.Current.MainPage.DisplayAlert("Ooops", "Something went wrong try again letter", "OK");
+                await Application.Current.MainPage.DisplayAlert("Ooops", "Something went wrong. Please try again later.", "OK");
 
             }
             finally
@@ -230,14 +235,13 @@ namespace MeteoHealth.ViewModels
             var weatherData = await _meteoHealthRepository.GetWeatherModelAsync(cancellationToken); 
             var healthState = await _meteoHealthRepository.GetHealthStatesAsync(cancellationToken);
 
-
             //var weatherData = CreateMockWeatherModels();
             //var healthState = CreateHealthModelMock();
 
 
             if (weatherData.Count == 0 || healthState.Count < 2)
             {
-                NotEnoughDataLabel = "Here will be appears the charts when be enought data";
+                NotEnoughDataLabel = "The charts will appear here once there is enough data";
                 return;
             }
 
@@ -267,11 +271,7 @@ namespace MeteoHealth.ViewModels
         }
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+   
 
         #region Mock data creation for testing 
         private List<WeatherModel> CreateMockWeatherModels()
@@ -327,11 +327,11 @@ namespace MeteoHealth.ViewModels
             {
                 token.ThrowIfCancellationRequested();
 
-                await Application.Current.MainPage.DisplayAlert("Ooops", "Not found geolocation, please set it", "OK");
+                await Application.Current.MainPage.DisplayAlert("Ooops", "Geolocation not found, please set it", "OK");
 
                 var tcs = new TaskCompletionSource<bool>();
 
-                var geolocationPage = new GeolocationPage(_meteoHealthRepository, cancellationToken);
+                var geolocationPage = new GeolocationPage(_meteoHealthRepository);
 
                 geolocationPage.Disappearing += (sender, e) => tcs.SetResult(true);
 
@@ -339,9 +339,6 @@ namespace MeteoHealth.ViewModels
                 await Application.Current.MainPage.Navigation.PushModalAsync(geolocationPage);
                 await tcs.Task;
 
-                //ShowHealthPopup();
-                //await Application.Current.MainPage.Navigation.PushModalAsync(new GeolocationPage(_meteoHealthRepository));
-                
             }
         }
         internal async Task CheckWeather(CancellationToken token)
@@ -361,19 +358,14 @@ namespace MeteoHealth.ViewModels
                 }
                 else
                 {
-                    bool answer = await Application.Current.MainPage.DisplayAlert("Ooops", "Your internet connection blabla, check your internet connection or try letter", "Try again", "Cancel");
-                    if (answer)
-                    {
-                        //if (!token.IsCancellationRequested)
-                        await CheckWeather(token);
-                    }
+                    throw new Exception();
                 }
             }
             IsLoading = false;
         }
       
         private async Task ShowHealthPopupAsync(string message, DateTime healthStateDate)
-        {
+        { 
             await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, message, healthStateDate));
 
         }
@@ -382,13 +374,17 @@ namespace MeteoHealth.ViewModels
 
         internal async Task CheckHealthState(CancellationToken token)// 
         {
-            
+
             var healthStates =  await _meteoHealthRepository.GetHealthStatesAsync(cancellationToken);
+
+            foreach (var item in healthStates)
+            {
+                Debug.WriteLine(item.Date);
+            }
             var healthStateDate = DateTime.Today;
             if (healthStates.Count == 0)
             {
-                await ShowHealthPopupAsync("How do you feel today?", healthStateDate);
-                //await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, "How do u feel today?", healthStateDate));
+                await ShowHealthPopupAsync("How are you feeling today?", healthStateDate);
                 return;
             }
             var today = healthStates.FirstOrDefault(x => x.Date == healthStateDate.ToString());
@@ -396,17 +392,10 @@ namespace MeteoHealth.ViewModels
 
             if (healthStates.Count == 0 || today is null)
             {
-                //call instead ShowHealthPopup
-                await ShowHealthPopupAsync("How do you feel today?", healthStateDate);
+                await ShowHealthPopupAsync("How are you feeling today?", healthStateDate);
 
-                //await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, "How do u feel today?", healthStateDate));
-                //return;
             }
       
-            //if (today is null)
-            //{
-            //    await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, "How do u feel today?", healthStateDate));
-            //}
             bool isRecordExists = false;
             while (!isRecordExists)
             {
@@ -414,11 +403,9 @@ namespace MeteoHealth.ViewModels
                 if (healthStates.FirstOrDefault(x => x.Date == healthStateDate.ToString()) is null && healthStateDate > firstDateInDb)
                 {
                     var date = healthStateDate.ToString("MM.dd");
-                    await ShowHealthPopupAsync($"Oops its look like in " +
-                        $"{healthStateDate.ToString("MM.dd")} you not checked stete,  How was your state in this day?", healthStateDate);
+                    await ShowHealthPopupAsync($"Oops, it looks like you didn't check the state at " +
+                        $"{healthStateDate.ToString("MM.dd")}.  How were you feeling on this day?", healthStateDate);
 
-                    //await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, $"Oops its look like in " +
-                    //    $"{healthStateDate.ToString("MM.dd")} you not checked stete,  How was your state in this day?", healthStateDate));
                 }
                 else
                 {

@@ -12,7 +12,5 @@ namespace MeteoHealth.ViewModels
             Title = "About";
             
         }
-
-     
     }
 }

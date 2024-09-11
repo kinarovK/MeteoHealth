@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local="clr-namespace:MeteoHealth.Views"
             x:Class="MeteoHealth.Views.MainFlyoutPage">
     <FlyoutPage.Flyout>
-        
-        <ContentPage Title="Menu" Padding="0" >
+ 
+        <ContentPage Title="Menu" Padding="0"  >
              
                 
                 <StackLayout Padding="0" Margin="0">
@@ -16,11 +16,5 @@
             </StackLayout>
         </ContentPage>
     </FlyoutPage.Flyout>
-    <FlyoutPage.Detail>
 
-        <NavigationPage x:Name="detailPage" Padding="0">
-            
-           
-        </NavigationPage>
-    </FlyoutPage.Detail>
 </FlyoutPage>

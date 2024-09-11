@@ -15,7 +15,7 @@ using Xamarin.Forms.Xaml;
 namespace MeteoHealth.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class HealthStatePopup : Popup
+    public partial class HealthStatePopup : Popup, INotifyPropertyChanged
     {
 
         public HealthStatePopup(IMeteoHealthRepository repo, string message, DateTime date)
@@ -35,9 +35,12 @@ namespace MeteoHealth.Views
         private void StateSlider_ValueChanged(object sender, ValueChangedEventArgs e)
         {
             var newStep = Math.Round(e.NewValue / StepValue);
+           // HealthLevel = newStep * StepValue;
             StateSlider.Value = newStep * StepValue;
+            
+            //OnPropertyChanged(nameof(Emoji));
         }
-
+       
 
 
     }

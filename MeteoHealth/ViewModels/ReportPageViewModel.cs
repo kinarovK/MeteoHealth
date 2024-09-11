@@ -14,15 +14,13 @@ using System.Reflection;
 using System.Collections.ObjectModel;
 using MeteoHealth.Views;
 using System.Threading;
+using MeteoHealth.ViewModels.Models;
+using Report_Service.Exceptions;
 
 namespace MeteoHealth.ViewModels
 {
-    public class ResultModel
-    {
-        public string Name { get; set; }
-        public double Value { get; set; }
-    }
-    internal class ReportPageViewModel : INotifyPropertyChanged
+   
+    internal class ReportPageViewModel : INotifyPropertyChanged//BaseViewModel //INotifyPropertyChanged
     {
         private readonly IMeteoHealthRepository repo;
         private readonly IReportMaker reportMaker;
@@ -51,10 +49,7 @@ namespace MeteoHealth.ViewModels
 
         private async Task OpenAboutReportPageAsync( )
         {
-            //await Application.Current.MainPage.Navigation.PushAsync(new AboutReportPage());
             await Application.Current.MainPage.Navigation.PushModalAsync(new AboutReportPage());
-
-            //Application.Current.MainPage = new NavigationPage(new AboutReportPage());
         }
 
         private string reportPeriod;
@@ -72,7 +67,7 @@ namespace MeteoHealth.ViewModels
         }
         private bool pontetionalRelationshipLabelIsVisible;
 
-        public bool PotentionalRelationshipLabelIsVisible
+        public bool IsRelationshipListVisible
         {
             get { return pontetionalRelationshipLabelIsVisible; }
             set
@@ -80,7 +75,7 @@ namespace MeteoHealth.ViewModels
                 if (pontetionalRelationshipLabelIsVisible != value)
                 {
                     pontetionalRelationshipLabelIsVisible = value;
-                    OnPropertyChanged(nameof(PotentionalRelationshipLabelIsVisible));
+                    OnPropertyChanged(nameof(IsRelationshipListVisible));
                 }
             }
         }
@@ -104,7 +99,7 @@ namespace MeteoHealth.ViewModels
         private List<ResultModel> listOfPossibleRelations;
         private bool isGetDetailReportButtonVisible;
 
-        public bool IsGetDetailReportButtonVisible
+        public bool IsGetDetailReportButtonEnabled
         {
             get { return isGetDetailReportButtonVisible; }
             set
@@ -112,7 +107,7 @@ namespace MeteoHealth.ViewModels
                 if (isGetDetailReportButtonVisible != value)
                 {
                     isGetDetailReportButtonVisible = value;
-                    OnPropertyChanged(nameof(IsGetDetailReportButtonVisible));
+                    OnPropertyChanged(nameof(IsGetDetailReportButtonEnabled));
                 }
             }
         }
@@ -156,29 +151,71 @@ namespace MeteoHealth.ViewModels
 
             PossibleRelationsList.Clear();
             listOfPossibleRelations.Clear();
-            var result = await reportMaker.GetReport(cancellationToken );
-
-            if (result == null)
+            try
             {
-                await Application.Current.MainPage.DisplayAlert("Ooops", "Not enought data to summary, keep going to check health state", "OK");
-                return;
+                reportModel = await reportMaker.GetReportAsync(cancellationToken);
+
             }
-            PotentionalRelationshipLabelIsVisible = true;
-            PossibleRelationshipLabelIsVisible = true;
-            reportModel = await reportMaker.GetReport(cancellationToken);
+            catch (OperationCanceledException)
+            {
+                //Task cancelled
+            }
+            catch (NotEnoughDataToReportException)
+            {
+                await Application.Current.MainPage.DisplayAlert("Ooops", "Not enough data to summarize. Please continue to check your health state.", "OK");
+                return;
+                //PossibleRelationshipLabelIsVisible = false;
+            }
+            catch(Exception ex )
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", $"Something went wrong. Please try again later. {ex.Message}", "OK");
+            }
+            /*var result*/
+
+            //if (/*result*/reportModel == null)
+            //{
+            //    await Application.Current.MainPage.DisplayAlert("Ooops", "Not enough data to summarize. Please continue to check your health state.", "OK");
+            //    return;
+            //}
+            //PossibleRelationshipLabelIsVisible = true;
+            //reportModel = await reportMaker.GetReport(cancellationToken);
+            reportModel = new ReportModel
+            {
+                TemperatureRelation = 0.15,
+                HumidityRelation = 0.50,
+                PressureRelation = 0.87,
+                PrecVolRelation = 0.45,
+                PrecProbabilityRelation = 0.8,
+                WindRelation = 0.01,
+                FullRelation = 0.005,
+                FirstDate = "2000.05.15",
+                LastDate = "2010.04.15"
+            };
+
             IsBiggerThanThresholdValue(reportModel);
             ChangeNaming(ref listOfPotentionalRelations);
             ChangeNaming(ref listOfPossibleRelations);
 
             foreach (var item in listOfPotentionalRelations)
             {
-                PotentialRelationsList.Add(new ResultModel { Name = item.Name, Value = item.Value});
+                PotentialRelationsList.Add(new ResultModel { Name = item.Name, Value = item.Value });
             }
             foreach (var item in listOfPossibleRelations)
             {
-                PossibleRelationsList.Add(new ResultModel { Name = item.Name, Value=item.Value});
+                PossibleRelationsList.Add(new ResultModel { Name = item.Name, Value = item.Value });
             }
-            IsGetDetailReportButtonVisible = true;
+            if (listOfPotentionalRelations.Count == 0 && listOfPossibleRelations.Count == 0)
+            {
+                await Application.Current.MainPage.DisplayAlert("Hmm", "No significant relationship was found between your health states and the weather parameters. Please continue to monitor your health state.", "OK");
+                IsRelationshipListVisible = false;
+                IsGetDetailReportButtonEnabled = true;
+                return;
+
+
+            }
+            IsGetDetailReportButtonEnabled = true;
+            IsRelationshipListVisible = true;
+
         }
         private List<ResultModel> tempResults;
 
@@ -270,7 +307,7 @@ namespace MeteoHealth.ViewModels
                  DetailedReportList.Add(new ResultModel { Name = item.Name, Value= item.Value });
 
             }
-            ReportPeriod = $"Report from {reportModel.FirstDate}-{reportModel.LastDate}";
+            ReportPeriod = $"Report from {firstDate.Date.ToShortDateString()}-{lastDate.Date.ToShortDateString()}";
 
 
         }

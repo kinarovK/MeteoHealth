@@ -29,16 +29,6 @@ namespace OpenWeatherMap_Api_Service
             return apiGetResult;
 
         }
-        public async Task<WeatherApiResponse> ExecuteApiRequest(string city)
-        {
-            var apiGetResult = await apiRequest.GetWeatherByCity(city);
-
-            if (apiGetResult is null)
-            {
-                return null;
-            }
-            return apiGetResult;
-
-        }
+     
     }
 }

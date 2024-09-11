@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -31,7 +32,13 @@ namespace SQLite_Database_service
         public async Task<List<HealthStateModel>> GetHealthStatesAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return await _connection.Table<HealthStateModel>().OrderBy(x=> x.Date).ToListAsync();
+            var healthStates = await _connection.Table<HealthStateModel>().ToListAsync();
+
+            // Order in memory by converting string to DateTime
+            return healthStates.OrderBy(x =>
+            {
+                return DateTime.Parse(x.Date);
+            }).ToList();
 
         }
         public Task<int> SaveWeatherModelAsync(List<WeatherModel> model)
@@ -90,8 +97,15 @@ namespace SQLite_Database_service
 
             cancellationToken.ThrowIfCancellationRequested();
             //return await _connection.Table<HealthStateModel>().OrderByDescending(i => i.Date).FirstOrDefaultAsync();
-            var a = await _connection.Table<HealthStateModel>().OrderByDescending(i => i.Date).FirstOrDefaultAsync();
-            return a;
+            var healthStates = await _connection.Table<HealthStateModel>().ToListAsync();
+
+            // Order in memory by converting string to DateTime
+            return healthStates.OrderBy(x =>
+            {
+                return DateTime.Parse(x.Date);
+            }).Last();
+            //var a = await _connection.Table<HealthStateModel>().OrderByDescending(i => i.Date).FirstOrDefaultAsync();
+            //return a;
         }
         public async Task<WeatherModel> GetLastWeatherModelAsync(CancellationToken cancellationToken)
         {
