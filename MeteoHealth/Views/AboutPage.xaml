@@ -16,7 +16,8 @@
                 <Label Text="About MeteoHealth"
                 VerticalOptions="Start"  
                 HorizontalOptions="CenterAndExpand" 
-                   FontSize="Large"/>
+                   FontSize="Large"
+                       FontAttributes="Bold"/>
                 <Label Text="The purpose of the application is to determine if you are sensitive to weather factors or changes in weather conditions. The application requires location data and internet access to perform the analysis. By using your location, it retrieves daily weather data relevant to your set location. For the analysis, you need to enter a daily health score, where a higher score indicates more pain or a worse condition. Once you have collected sufficient data, you can run a query on the Report page. "
 
                    HorizontalTextAlignment="Start"
@@ -49,7 +50,7 @@
                 TextColor="DarkGray"
                  FontAttributes="Bold"      
                 />
-                <Label Text="Here you are now"/>
+                <Label Text="Here you are now."/>
                 <Label Text="Report Page:"
                  FontSize="Medium"
                 TextColor="DarkGray"

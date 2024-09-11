@@ -36,6 +36,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Report_Service\Report_Service.csproj" />
     <ProjectReference Include="..\OpenWeatherMap_Api_Service\OpenWeatherMap_Api_Service.csproj" />
+    <ProjectReference Include="..\Report_Service\Report_Service.csproj" />
     <ProjectReference Include="..\SQLite_Database_service\SQLite_Database_service.csproj" />
   </ItemGroup>
 
