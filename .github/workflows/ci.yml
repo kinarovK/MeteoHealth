@@ -14,14 +14,26 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: '6.x'  # Specify the .NET version
-          
-      - name: Set up Android environment
-        uses: r0adkll/sign-android-release@v1
+
+      - name: Set up Java JDK (required for Android)
+        uses: actions/setup-java@v2
         with:
-          build-tools: '31.0.0'  # Specify the required build tools version
-          platform-tools: '31.0.0'
-          android-ndk-version: '21.4.7075529'  # Set the correct NDK version
-          android-licenses: true
+          distribution: 'temurin'
+          java-version: '11'  # Java version compatible with Android SDK
+
+      - name: Set up Android SDK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lib32stdc++6 lib32z1
+          sudo mkdir -p /usr/local/lib/android/sdk
+          wget https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip
+          sudo unzip commandlinetools-linux-7302050_latest.zip -d /usr/local/lib/android/sdk/cmdline-tools
+          sudo mkdir -p /usr/local/lib/android/sdk/cmdline-tools/tools
+          sudo mv /usr/local/lib/android/sdk/cmdline-tools/* /usr/local/lib/android/sdk/cmdline-tools/tools
+          export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
+          export PATH=$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$PATH
+          sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0" "ndk;21.4.7075529"
 
       - name: Restore dependencies
         run: dotnet restore
@@ -36,5 +48,4 @@ jobs:
         env:
           OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAPAPIKEY }}
         run: |
-          echo "The API key is $OPENWEATHERMAP_API_KEY"  
-        
+          echo "The API key is $OPENWEATHERMAP_API_KEY"
