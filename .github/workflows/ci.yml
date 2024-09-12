@@ -14,15 +14,14 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: '6.x'  # Specify the .NET version
-      
-      - name: Install Xamarin
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libunwind8 gettext
-          wget https://dl.xamarin.com/android/ndk/android-ndk-r21d-linux-x86_64.zip
-          unzip android-ndk-r21d-linux-x86_64.zip
-          export ANDROID_NDK_HOME=$(pwd)/android-ndk-r21d
-      
+        - name: Set up Android environment
+        uses: r0adkll/sign-android-release@v1
+        with:
+          build-tools: '31.0.0'  # Specify the required build tools version
+          platform-tools: '31.0.0'
+          android-ndk-version: '21.4.7075529'  # Set the correct NDK version
+          android-licenses: true
+
       - name: Restore dependencies
         run: dotnet restore
 
