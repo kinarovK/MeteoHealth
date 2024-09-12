@@ -25,7 +25,7 @@ namespace OpenWeatherMap_Api_Service
         public OpenWeatherMapApiRequest(IOptionsMonitor<ApplicationOptions> options, IHttpClientFactory clientFactory, IConfiguration config)
         {
             apiUri = options.CurrentValue.ApiUrlBase;
-            apiKey = options.CurrentValue.ApiKey; 
+            apiKey = Environment.GetEnvironmentVariable("OPENWEATHERMAP_API_KEY");//options.CurrentValue.ApiKey; 
             client = new OpenWeatherMapHttpClient(clientFactory.CreateClient());
             //https://api.openweathermap.org/data/2.5/forecast?q=Berehove&units=metric&appid=967d6d313cb6f392bc0bcbed0f868597
 
