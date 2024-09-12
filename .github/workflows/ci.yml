@@ -15,7 +15,7 @@ jobs:
         with:
           dotnet-version: '6.x'  # Specify the .NET version
           
-        - name: Set up Android environment
+      - name: Set up Android environment
         uses: r0adkll/sign-android-release@v1
         with:
           build-tools: '31.0.0'  # Specify the required build tools version
