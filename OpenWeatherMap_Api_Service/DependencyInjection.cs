@@ -19,6 +19,7 @@ namespace OpenWeatherMap_Api_Service
 
             services.Configure<ApplicationOptions>(config.GetSection(ApplicationOptions.AppSettings));
             //var apiKey = config["AppSettings:apiKey"];
+            //var api = config["OpenWeatherMapApiKey"];
             //var apiUrlBase = config["AppSettings:apiUrlBase"];
             services.AddSingleton<IOpenWeatherMapApiController, OpenWeatherMapApiController>();
             services.AddSingleton<IOpenWeatherMapApiRequest, OpenWeatherMapApiRequest>();
