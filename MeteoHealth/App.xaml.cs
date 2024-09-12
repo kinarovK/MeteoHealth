@@ -66,20 +66,11 @@ namespace MeteoHealth
                 return DependencyService.Get<INotificationService>();
                 });
         }
-
-        //openWeatherMapApiKey
-
         private IConfiguration BuildConfiguration()
         {
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = assembly.GetManifestResourceNames()
-                .FirstOrDefault(r => r.EndsWith("appsettings.json", StringComparison.OrdinalIgnoreCase));
-
-            if (resourceName == null)
-            {
-                
-                throw new FileNotFoundException("appsettings.json not found as an embedded resource.");
-            }
+                .FirstOrDefault(r => r.EndsWith("secrets.json", StringComparison.OrdinalIgnoreCase));
 
             using (var stream = assembly.GetManifestResourceStream(resourceName))
             {

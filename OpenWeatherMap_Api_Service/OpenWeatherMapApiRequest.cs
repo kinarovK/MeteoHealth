@@ -25,39 +25,25 @@ namespace OpenWeatherMap_Api_Service
         public OpenWeatherMapApiRequest(IOptionsMonitor<ApplicationOptions> options, IHttpClientFactory clientFactory, IConfiguration config)
         {
             apiUri = options.CurrentValue.ApiUrlBase;
-            apiKey = Environment.GetEnvironmentVariable("OPENWEATHERMAP_API_KEY");//options.CurrentValue.ApiKey; 
+            apiKey = options.CurrentValue.ApiKey; 
             client = new OpenWeatherMapHttpClient(clientFactory.CreateClient());
-            //https://api.openweathermap.org/data/2.5/forecast?q=Berehove&units=metric&appid=967d6d313cb6f392bc0bcbed0f868597
-
-           
         }
         public async Task<WeatherApiResponse> GetWeatherByCoordinates(string lat, string lon, CancellationToken token)
         {
             fullApi = $"{apiUri}?lat={lat}&lon={lon}&units=metric&appid={apiKey}";
             token.ThrowIfCancellationRequested();
-          
-            //try
-            //{
-                using (var response = await client.HttpClient.GetAsync(new Uri(fullApi), token))
+
+            using (var response = await client.HttpClient.GetAsync(new Uri(fullApi), token))
+            {
+                if (response.IsSuccessStatusCode)
                 {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        return JsonConvert.DeserializeObject<WeatherApiResponse>(json);
-                        
-                    }
-                    return null;
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<WeatherApiResponse>(json);
 
                 }
-            //}
-            ////TaskCancelledException
-            ////Handle exception or make some logger service
-            //catch (Exception ex)
-            //{
+                return null;
 
-            //    return null;
-            //}
+            }
         }
-  
     }
 }
