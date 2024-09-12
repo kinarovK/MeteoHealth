@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace OpenWeatherMap_Api_Service
 {
-    internal class ApiController : IOpenWeatherMapApiController
+    internal class OpenWeatherMapApiController : IOpenWeatherMapApiController
     {
         private readonly IOpenWeatherMapApiRequest apiRequest;
 
-        public ApiController(IOpenWeatherMapApiRequest apiRequest)
+        public OpenWeatherMapApiController(IOpenWeatherMapApiRequest apiRequest)
         {
             this.apiRequest = apiRequest;
         }

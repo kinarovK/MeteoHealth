@@ -67,8 +67,8 @@ namespace MeteoHealth
                 });
         }
 
+        //openWeatherMapApiKey
 
-     
         private IConfiguration BuildConfiguration()
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -86,6 +86,8 @@ namespace MeteoHealth
                 var configuration = new ConfigurationBuilder()
                     .AddJsonStream(stream)
                     .Build();
+
+      
 
                 return configuration;
             }

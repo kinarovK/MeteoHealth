@@ -11,19 +11,21 @@ using OpenWeatherMap_Api_Service.Interfaces;
 using OpenWeatherMap_Api_Service.Models;
 using System.Threading;
 using System.Net.Sockets;
+using Microsoft.Extensions.Configuration;
+using System.Resources;
 
 namespace OpenWeatherMap_Api_Service
 {
-    internal class ApiRequest : IOpenWeatherMapApiRequest
+    internal class OpenWeatherMapApiRequest : IOpenWeatherMapApiRequest
     {
         private readonly IWeatherApiHttpClient client;
         private readonly string apiUri;
         private readonly string apiKey;
         private  string fullApi;
-        public ApiRequest(IOptionsMonitor<ApplicationOptions> options, IHttpClientFactory clientFactory)
+        public OpenWeatherMapApiRequest(IOptionsMonitor<ApplicationOptions> options, IHttpClientFactory clientFactory, IConfiguration config)
         {
             apiUri = options.CurrentValue.ApiUrlBase;
-            apiKey = options.CurrentValue.ApiKey;
+            apiKey = options.CurrentValue.ApiKey; 
             client = new OpenWeatherMapHttpClient(clientFactory.CreateClient());
             //https://api.openweathermap.org/data/2.5/forecast?q=Berehove&units=metric&appid=967d6d313cb6f392bc0bcbed0f868597
 
