@@ -26,7 +26,7 @@ jobs:
 
       - name: Use Secret
         env:
-          OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAP_API_KEY }}
+          OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAPAPIKEY }}
         run: |
           echo "The API key is $OPENWEATHERMAP_API_KEY"  
         
