@@ -43,6 +43,8 @@ namespace MeteoHealth.Droid
                     Description = "Channel for daily reminders"
                 };
 
+
+
                 var notificationManager = (NotificationManager)GetSystemService(NotificationService);
                 notificationManager.CreateNotificationChannel(channel);
             }

@@ -1,21 +1,15 @@
 ﻿using MeteoHealth.Services;
-using Microsoft.Extensions.Primitives;
 using OpenWeatherMap_Api_Service.Interfaces;
 using Report_Service.Interfaces;
 using SQLite_Database_service.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace MeteoHealth.Views
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
+    [XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MainFlyoutPage : FlyoutPage
 	{
 		private readonly IMeteoHealthRepository meteoHealthRepository;
@@ -51,7 +45,7 @@ namespace MeteoHealth.Views
 
             if (cancellationTokenSource.IsCancellationRequested)
             {
-                //cancellationTokenSource.Dispose();
+               
                 cancellationTokenSource = new CancellationTokenSource();
             }
             var mainPage = new MainPage(meteoHealthRepository, chartMaker, apiController, apiService, cancellationTokenSource.Token);
@@ -68,7 +62,7 @@ namespace MeteoHealth.Views
             cancellationTokenSource?.Cancel();
             if (cancellationTokenSource.IsCancellationRequested)
             {
-                //cancellationTokenSource.Dispose();
+                
                 cancellationTokenSource = new CancellationTokenSource();
             }
 
@@ -85,7 +79,7 @@ namespace MeteoHealth.Views
 
             if (cancellationTokenSource.IsCancellationRequested)
             {
-                //cancellationTokenSource.Dispose();
+           
                 cancellationTokenSource = new CancellationTokenSource();
             }
 
@@ -99,7 +93,6 @@ namespace MeteoHealth.Views
 
             if (cancellationTokenSource.IsCancellationRequested)
             {
-                //cancellationTokenSource.Dispose();
                 cancellationTokenSource = new CancellationTokenSource();
             }
             Detail = new NavigationPage(new ReportPage(meteoHealthRepository, reportMaker, cancellationTokenSource.Token)) 

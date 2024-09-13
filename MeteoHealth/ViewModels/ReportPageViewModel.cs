@@ -1,16 +1,12 @@
 ﻿using SQLite_Database_service.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 using Report_Service.Interfaces;
 using Report_Service.Models;
 using System.ComponentModel;
-using System.Reflection;
 using System.Collections.ObjectModel;
 using MeteoHealth.Views;
 using System.Threading;
@@ -19,7 +15,7 @@ using Report_Service.Exceptions;
 
 namespace MeteoHealth.ViewModels
 {
-   
+
     internal class ReportPageViewModel : INotifyPropertyChanged//BaseViewModel //INotifyPropertyChanged
     {
         private readonly IMeteoHealthRepository repo;

@@ -1,11 +1,4 @@
-﻿using SQLite_Database_service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Report_Service.Models
+﻿namespace Report_Service.Models
 {
     public class ConvertedWeatherArrayModel
     {

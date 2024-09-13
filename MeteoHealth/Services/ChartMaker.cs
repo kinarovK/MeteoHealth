@@ -4,10 +4,7 @@ using OxyPlot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using OxyPlot.Xamarin.Forms;
 using SQLite_Database_service.Models;
-using System.Threading;
 
 namespace MeteoHealth.Services
 {

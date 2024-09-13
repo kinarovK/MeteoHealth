@@ -1,26 +1,9 @@
-﻿using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-
 using SQLite_Database_service.Interfaces;
-using SQLite_Database_service;
-using Xamarin.CommunityToolkit.Extensions;
-using OpenWeatherMap_Api_Service.Models;
-//using OxyPlot.Xamarin.Forms;
 using OxyPlot;
-using OxyPlot.Axes;
-using OxyPlot.Series;
 using MeteoHealth.Services;
-using OxyPlot.Xamarin.Forms;
-
-using Xamarin.Essentials;
-using Microsoft.Extensions.DependencyInjection;
 using MeteoHealth.ViewModels;
 using OpenWeatherMap_Api_Service.Interfaces;
 using System.Threading;

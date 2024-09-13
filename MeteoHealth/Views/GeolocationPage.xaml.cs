@@ -1,13 +1,5 @@
 ﻿using MeteoHealth.ViewModels;
-using SQLite_Database_service;
 using SQLite_Database_service.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;

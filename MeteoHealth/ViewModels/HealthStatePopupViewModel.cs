@@ -1,10 +1,6 @@
-﻿using SQLite_Database_service;
-using SQLite_Database_service.Interfaces;
+﻿using SQLite_Database_service.Interfaces;
 using SQLite_Database_service.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;

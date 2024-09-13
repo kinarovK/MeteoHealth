@@ -1,14 +1,10 @@
-﻿using MathNet.Numerics;
-using MathNet.Numerics.LinearRegression;
-using Report_Service.Exceptions;
+﻿using Report_Service.Exceptions;
 using Report_Service.Interfaces;
 using Report_Service.Models;
 using SQLite_Database_service.Interfaces;
 using SQLite_Database_service.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 

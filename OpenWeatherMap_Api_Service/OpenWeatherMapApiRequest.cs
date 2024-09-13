@@ -1,18 +1,12 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-//using System.Text.Json;
 using System.Threading.Tasks;
 using System.Net.Http;
 using OpenWeatherMap_Api_Service.Interfaces;
 using OpenWeatherMap_Api_Service.Models;
 using System.Threading;
-using System.Net.Sockets;
 using Microsoft.Extensions.Configuration;
-using System.Resources;
 
 namespace OpenWeatherMap_Api_Service
 {

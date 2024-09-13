@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MeteoHealth.ViewModels.Models
+﻿namespace MeteoHealth.ViewModels.Models
 {
     public class ResultModel
     {

@@ -6,7 +6,6 @@ using System;
 using Xamarin.Forms;
 using System.Reflection;
 using System.Linq;
-using System.IO;
 using OpenWeatherMap_Api_Service;
 using OpenWeatherMap_Api_Service.Interfaces;
 using SQLite_Database_service;
