@@ -1,0 +1,23 @@
+[33mcommit 8d650edf469b37348bd72250116f971cc082fa40[m
+Author: Kinarov Kristian <kinarov.k@gmail.com>
+Date:   Thu Sep 12 22:08:53 2024 +0200
+
+    remove json
+
+[33mcommit 104b7c2e088bcf93a10b8e0e0d42dbac0d9fd758[m
+Author: Kinarov Kristian <kinarov.k@gmail.com>
+Date:   Thu Sep 12 22:08:26 2024 +0200
+
+    Test commit
+
+[33mcommit c639e99a72752c610827ef842533aefa59ba24ac[m
+Author: Kinarov Kristian <kinarov.k@gmail.com>
+Date:   Thu Sep 12 22:06:16 2024 +0200
+
+    removed unused json
+
+[33mcommit aaf6c40a708de52e721d444b8c96c99a2ec75c90[m
+Author: Kinarov Kristian <kinarov.k@gmail.com>
+Date:   Thu Sep 12 22:05:15 2024 +0200
+
+    added secret
