@@ -26,7 +26,30 @@ namespace Report_Service
             this.regressionCalculator = regressionCalculator;
             this.dataPreparator = dataPreparator;
         }
+        public async Task<List<DateTime>> CheckAbsentDates(CancellationToken cancellationToken)
+        {
+            var absentDates = new List<DateTime>();
+            var healthDates = await GetHealthFromDb(cancellationToken);
+            DateTime.TryParse(healthDates.FirstOrDefault().Date, out var targetDate);
+            foreach (var healthDate in healthDates)
+            {
+                DateTime.TryParse(healthDate.Date, out var parsedActualDate);
+                if (targetDate != parsedActualDate)
+                {
+                    while (targetDate !=  parsedActualDate)
+                    {
+                        absentDates.Add(targetDate);
+                        targetDate = targetDate.AddDays(1);
 
+                    }
+
+                }
+                
+                targetDate = targetDate.AddDays(1);
+
+            }
+            return absentDates;
+        }
         public async Task<ReportModel> GetReportAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -41,8 +64,8 @@ namespace Report_Service
             weathers = dataPreparator.TrimTheWeatherModels(weathers, healthStates);
             var convertedWeathers = dataPreparator.ConvertWatherModelsToArray(weathers);
 
-            var convertedHealthStates = dataPreparator.ConvertHealthStatesToArray(healthStates);
-            var extendedHealthStates = dataPreparator.ExtendHealthLenght(weathers.Count, convertedHealthStates);
+            var extendedHealthStates = await dataPreparator.ExtendHealthStateModels(healthStates, weathers); 
+            
 
             var result = new ReportModel();
             result.TemperatureRelation = regressionCalculator.CalculateSingleRegression(extendedHealthStates, convertedWeathers.temperatureArray);

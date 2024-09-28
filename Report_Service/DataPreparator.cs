@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Report_Service.Interfaces;
 using Report_Service.Models;
@@ -50,25 +51,65 @@ namespace Report_Service
         public List<WeatherModel> TrimTheWeatherModels(List<WeatherModel> weatherModels, List<HealthStateModel> healthStateModels)
         {
             var parsedFirstDate = DateTime.Parse(healthStateModels.First().Date);
-            var parsedLastDate = DateTime.Parse(healthStateModels.Last().Date);
+            var parsedLastDate = DateTime.Parse(healthStateModels.Last().Date).AddDays(1);
             //var newList = weatherModels;
             var trimmedWeatherModels = weatherModels.Where(x =>
             {
                 DateTime parsed = DateTime.Parse(x.DateTime);
-                return parsed >= parsedFirstDate && parsed < parsedLastDate.AddDays(1);
+                return parsed >= parsedFirstDate && parsed < parsedLastDate;
             }).ToList();
+
+            foreach (var item in trimmedWeatherModels)
+            {
+                //Debug.WriteLine(item.DateTime);
+            }
+            //SyncHealthLenghtWithWeather(healthStateModels, trimmedWeatherModels);
             return trimmedWeatherModels;
+
         }
-        public List<HealthStateModel> TrimTheHealthStatesModels(List<HealthStateModel> weatherModels)
+        public List<HealthStateModel> TrimTheHealthStatesModels(List<HealthStateModel> healthState)
         {
-            weatherModels.RemoveAt(0);
-            return weatherModels;
+            healthState.RemoveAt(0);
+            return healthState;
+        }
+
+        public async Task<double[]> ExtendHealthStateModels(List<HealthStateModel> healthStates, List<WeatherModel> weatherModels)
+        {
+            return await Task.Run(() =>
+            { 
+
+            double[] healthLevels = new double[weatherModels.Count];
+            var healthIndex = 0;
+            DateTime previousDate = DateTime.Parse(weatherModels.FirstOrDefault().DateTime).Date;
+
+            for (int i = 0; i < weatherModels.Count - 1; i++)
+            {
+                DateTime currentWeatherDate = DateTime.Parse(weatherModels[i].DateTime).Date;
+
+                if (previousDate.Date != DateTime.Parse(weatherModels[i].DateTime).Date/*dateTimes[i].Date.Date*/)
+                {
+                    healthIndex++;
+                    previousDate = currentWeatherDate;
+
+                }
+                if (currentWeatherDate == DateTime.Parse(healthStates[healthIndex].Date).Date)
+                {
+                    healthLevels[i] = healthStates[healthIndex].HealthLevel;
+
+                }
+            }
+
+            return healthLevels;
+            });
         }
         public double[] ExtendHealthLenght(int targertLength, double[] healthState)
         {
             double[] extendedHealth = new double[targertLength];
             int step = 8; //Daily weather records number
             int counter = 0;
+
+
+
 
             for (int i = 0; i < healthState.Length; i++)
             {

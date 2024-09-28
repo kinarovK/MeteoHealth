@@ -16,15 +16,15 @@ using MeteoHealth.Views;
 using System.Threading;
 using MeteoHealth.ViewModels.Models;
 using Report_Service.Exceptions;
+using Xamarin.CommunityToolkit.Extensions;
 
 namespace MeteoHealth.ViewModels
 {
    
-    internal class ReportPageViewModel : INotifyPropertyChanged//BaseViewModel //INotifyPropertyChanged
+    internal class ReportPageViewModel : INotifyPropertyChanged
     {
         private readonly IMeteoHealthRepository repo;
         private readonly IReportMaker reportMaker;
-        private readonly CancellationToken cancellationToken;
 
         public ICommand GetReportCommand { get; }
         public ICommand GetReportDetailsCommand { get; }
@@ -34,7 +34,6 @@ namespace MeteoHealth.ViewModels
         {
             this.repo = repo;
             this.reportMaker = reportMaker;
-            this.cancellationToken = cancellationToken;
             GetReportCommand = new Command(async() =>await GetReportAsync(cancellationToken));
             GetReportDetailsCommand = new Command(() => GetReportDetails());
             OpenAboutReportPageCommand = new Command(async () => await OpenAboutReportPageAsync());
@@ -151,8 +150,10 @@ namespace MeteoHealth.ViewModels
 
             PossibleRelationsList.Clear();
             listOfPossibleRelations.Clear();
+
             try
             {
+                await FillMissingDates(cancellationToken);
                 reportModel = await reportMaker.GetReportAsync(cancellationToken);
 
             }
@@ -169,6 +170,7 @@ namespace MeteoHealth.ViewModels
             catch(Exception ex )
             {
                 await Application.Current.MainPage.DisplayAlert("Error", $"Something went wrong. Please try again later. {ex.Message}", "OK");
+                return;
             }
             /*var result*/
 
@@ -179,18 +181,18 @@ namespace MeteoHealth.ViewModels
             //}
             //PossibleRelationshipLabelIsVisible = true;
             //reportModel = await reportMaker.GetReport(cancellationToken);
-            reportModel = new ReportModel
-            {
-                TemperatureRelation = 0.15,
-                HumidityRelation = 0.50,
-                PressureRelation = 0.87,
-                PrecVolRelation = 0.45,
-                PrecProbabilityRelation = 0.8,
-                WindRelation = 0.01,
-                FullRelation = 0.005,
-                FirstDate = "2000.05.15",
-                LastDate = "2010.04.15"
-            };
+            //reportModel = new ReportModel
+            //{
+            //    TemperatureRelation = 0.15,
+            //    HumidityRelation = 0.50,
+            //    PressureRelation = 0.87,
+            //    PrecVolRelation = 0.45,
+            //    PrecProbabilityRelation = 0.8,
+            //    WindRelation = 0.01,
+            //    FullRelation = 0.005,
+            //    FirstDate = "2000.05.15",
+            //    LastDate = "2010.04.15"
+            //};
 
             IsBiggerThanThresholdValue(reportModel);
             ChangeNaming(ref listOfPotentionalRelations);
@@ -219,7 +221,22 @@ namespace MeteoHealth.ViewModels
         }
         private List<ResultModel> tempResults;
 
-
+        public async Task FillMissingDates(CancellationToken cancellationToken)
+        {
+            var dates =await reportMaker.CheckAbsentDates(cancellationToken);
+            if (dates.Count == 0)
+            {
+                return;
+            }
+            else
+            {
+                foreach (var date in dates)
+                {
+                    await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(repo, $"Oops, it looks like you didn't check the state at " +
+                        $"{date.ToString("MM.dd")}.  How were you feeling on this day?", date)); 
+                }
+            }
+        }
         public void IsBiggerThanThresholdValue(ReportModel reportModel)
         {
             tempResults = new List<ResultModel>();
@@ -241,8 +258,6 @@ namespace MeteoHealth.ViewModels
                     continue;
                 }
                 tempResults.Add(new ResultModel { Name = item.Name, Value = value });
-
-
             }
         }
 

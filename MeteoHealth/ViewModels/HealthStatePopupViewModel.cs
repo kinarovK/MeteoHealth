@@ -50,7 +50,7 @@ namespace MeteoHealth.ViewModels
             };
 
             await _meteoHealthRepository.SaveHealtStateModel(model);
-            MessagingCenter.Send(this, "ClosePopup"); //System.Reflection.TargetInvocationException: 'Exception has been thrown by the target of an invocation.'
+            MessagingCenter.Send(this, "ClosePopup"); 
         }
 
         public string Emoji

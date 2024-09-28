@@ -18,7 +18,7 @@ using Xamarin.Forms.Maps;
 
 namespace MeteoHealth.ViewModels
 {
-    internal class GeolocationPageViewModel : BaseViewModel//INotifyPropertyChanged
+    internal class GeolocationPageViewModel : BaseViewModel
     {
         private readonly IMeteoHealthRepository meteoHealthRepository;
         

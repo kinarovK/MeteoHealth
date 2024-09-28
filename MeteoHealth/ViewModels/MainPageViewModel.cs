@@ -22,7 +22,7 @@ using Xamarin.Forms;
 
 namespace MeteoHealth.ViewModels
 {
-    public class MainPageViewModel : BaseViewModel //INotifyPropertyChanged
+    public class MainPageViewModel : BaseViewModel 
     {
         private readonly IMeteoHealthRepository _meteoHealthRepository;
         private readonly IChartMaker chartmaker;
@@ -215,7 +215,7 @@ namespace MeteoHealth.ViewModels
             {
                 //Operration in current page cancelled, going to next page
 
-                //await Application.Current.MainPage.DisplayAlert("Cancelled", "Operation cancelled", "Ok");
+               
             }
             catch (Exception ex)
             {
