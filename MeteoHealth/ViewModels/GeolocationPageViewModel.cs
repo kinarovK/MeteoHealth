@@ -103,7 +103,7 @@ namespace MeteoHealth.ViewModels
             {
                 var result = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Lowest, TimeSpan.FromSeconds(10)));
 
-                if (!await ShowConfirmationDialog(result.Latitude.ToString(), result.Latitude.ToString()))
+                if (!await ShowConfirmationDialog(result.Latitude.ToString(), result.Longitude.ToString()))
                 {
                     return;
                 }
