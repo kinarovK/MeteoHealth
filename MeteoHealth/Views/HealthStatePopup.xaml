@@ -7,8 +7,8 @@
            IsLightDismissEnabled="False"
            >
 
-    <StackLayout>
-        <Label x:Name="title" />
+    <StackLayout BackgroundColor="#298c86">
+        <Label x:Name="title" TextColor="Black" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontSize="Subtitle"/>
         <Slider x:Name="StateSlider"
                 Maximum="5"
                 Minimum="1"
@@ -18,8 +18,8 @@
                 
                 />
         <Label x:Name="SliderValue" FontSize="40" Text="{Binding Emoji}"  HorizontalOptions="Center" VerticalOptions="Center" />
-        <Button x:Name="SetButton" Margin="30, 40, 30, 30" CornerRadius="20" Text="Ok" Command="{Binding SaveCommand}" />
+        <Button x:Name="SetButton" Margin="30, 40, 30, 30" CornerRadius="20" BackgroundColor="#044d48" BorderWidth="1" Text="Ok" Command="{Binding SaveCommand}" />
        
     </StackLayout>
-        
+
 </xct:Popup>

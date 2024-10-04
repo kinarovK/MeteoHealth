@@ -23,6 +23,7 @@ namespace MeteoHealth.Views
             InitializeComponent();
             BindingContext = new HealthStatePopupViewModel(repo, date);
             title.Text = message;
+            
             MessagingCenter.Subscribe<HealthStatePopupViewModel>(this, "ClosePopup",  (sender) =>
             {
                   
@@ -35,13 +36,7 @@ namespace MeteoHealth.Views
         private void StateSlider_ValueChanged(object sender, ValueChangedEventArgs e)
         {
             var newStep = Math.Round(e.NewValue / StepValue);
-           // HealthLevel = newStep * StepValue;
             StateSlider.Value = newStep * StepValue;
-            
-            //OnPropertyChanged(nameof(Emoji));
         }
-       
-
-
     }
 }

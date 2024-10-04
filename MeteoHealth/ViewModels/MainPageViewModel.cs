@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Xml.Serialization;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Forms;
 
@@ -196,10 +197,13 @@ namespace MeteoHealth.ViewModels
             IsLoading = true;
             try
             {
-
-                await CheckHealthState(cancellationToken);
-                await CheckGeolocation(cancellationToken);
-                await CheckWeather(cancellationToken);
+                if (isGeolocationSettedFlag == false)
+                {
+                    return;
+                }
+                await CheckGeolocationAsync(cancellationToken);
+                await CheckHealthStateAsync(cancellationToken);
+                await CheckWeatherAsync(cancellationToken);
                 await InitializeChartsAsync(cancellationToken);
             }
         
@@ -208,7 +212,7 @@ namespace MeteoHealth.ViewModels
                 bool answer = await Application.Current.MainPage.DisplayAlert("Ooops", "Your internet connection is weak or missing. Please check your connection or try again later.", "Try again", "Cancel");
                 if (answer)
                 {
-                    await CheckWeather(cancellationToken);
+                    await CheckWeatherAsync(cancellationToken);
                 }
             }
             catch (OperationCanceledException)
@@ -217,6 +221,7 @@ namespace MeteoHealth.ViewModels
 
                
             }
+            
             catch (Exception ex)
             {
                 await Application.Current.MainPage.DisplayAlert("Ooops", "Something went wrong. Please try again later.", "OK");
@@ -317,42 +322,41 @@ namespace MeteoHealth.ViewModels
 
         }
         #endregion
-       
-        internal async Task CheckGeolocation(CancellationToken token)
+        //Important in first load when the permission is asked
+        TaskCompletionSource<bool> tcs;
+        bool isGeolocationSettedFlag = true;
+        internal async Task CheckGeolocationAsync(CancellationToken token)
         {
-            var geolocation = await _meteoHealthRepository.GetGeolocationModelsAsync(cancellationToken);
-            await Task.Delay(5000);
-
+            var geolocation = await _meteoHealthRepository.GetGeolocationModelsAsync(token);
+           
+           
             if (geolocation.Count == 0)
             {
                 token.ThrowIfCancellationRequested();
-
+                isGeolocationSettedFlag = false;
                 await Application.Current.MainPage.DisplayAlert("Ooops", "Geolocation not found, please set it", "OK");
 
-                var tcs = new TaskCompletionSource<bool>();
-
                 var geolocationPage = new GeolocationPage(_meteoHealthRepository);
-
+                
                 geolocationPage.Disappearing += (sender, e) => tcs.SetResult(true);
-
                 
                 await Application.Current.MainPage.Navigation.PushModalAsync(geolocationPage);
+                tcs = new TaskCompletionSource<bool>();
                 await tcs.Task;
-
+                isGeolocationSettedFlag = true;
             }
         }
-        internal async Task CheckWeather(CancellationToken token)
+        internal async Task CheckWeatherAsync(CancellationToken token)
         {
-          
-
             token.ThrowIfCancellationRequested();
-            var weathers = await _meteoHealthRepository.GetLastWeatherModelAsync(cancellationToken); //or maybe get last 
-            if (weathers == null || DateTime.Parse(weathers.RequestDate) != DateTime.Today.AddDays(30))//exception here
+            var weathers = await _meteoHealthRepository.GetLastWeatherModelAsync(token); 
+            if (weathers == null || DateTime.Parse(weathers.RequestDate) != DateTime.Today.AddDays(30))
             {
-                var geolocation = await _meteoHealthRepository.GetLastGeolocationModelAsync(cancellationToken); //get just last
+                var geolocation = await _meteoHealthRepository.GetLastGeolocationModelAsync(cancellationToken); 
                 WeatherApiResponse apiResult =await apiController.ExecuteApiRequest(geolocation.Latitude.ToString(), geolocation.Longitude.ToString(), token);
                 if (apiResult != null)
                 {
+                 
                     await _meteoHealthRepository.UpsertWeatherModelAsync(apiService.ConvertToModel(apiResult));
 
                 }
@@ -367,20 +371,17 @@ namespace MeteoHealth.ViewModels
         private async Task ShowHealthPopupAsync(string message, DateTime healthStateDate)
         { 
             await Application.Current.MainPage.Navigation.ShowPopupAsync(new HealthStatePopup(_meteoHealthRepository, message, healthStateDate));
-
         }
 
 
 
-        internal async Task CheckHealthState(CancellationToken token)// 
+        internal async Task CheckHealthStateAsync(CancellationToken token)// 
         {
 
-            var healthStates =  await _meteoHealthRepository.GetHealthStatesAsync(cancellationToken);
+            token.ThrowIfCancellationRequested();
+            var healthStates =  await _meteoHealthRepository.GetHealthStatesAsync(token);
 
-            foreach (var item in healthStates)
-            {
-                Debug.WriteLine(item.Date);
-            }
+         
             var healthStateDate = DateTime.Today;
             if (healthStates.Count == 0)
             {
@@ -390,10 +391,9 @@ namespace MeteoHealth.ViewModels
             var today = healthStates.FirstOrDefault(x => x.Date == healthStateDate.ToString());
             DateTime.TryParse(healthStates.FirstOrDefault().Date, out var firstDateInDb);
 
-            if (healthStates.Count == 0 || today is null)
+            if ( today is null)
             {
                 await ShowHealthPopupAsync("How are you feeling today?", healthStateDate);
-
             }
       
             bool isRecordExists = false;
@@ -413,6 +413,5 @@ namespace MeteoHealth.ViewModels
                 }
             }
         }
-      
     }
 }

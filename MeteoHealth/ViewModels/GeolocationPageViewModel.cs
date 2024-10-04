@@ -21,22 +21,17 @@ namespace MeteoHealth.ViewModels
     internal class GeolocationPageViewModel : BaseViewModel
     {
         private readonly IMeteoHealthRepository meteoHealthRepository;
-        
-        private readonly Geocoder geocoder;
+
         public ICommand HandleMapClickedCommand { get; }
-        public ICommand GetCurrentLocationCommand { get; }
+        public ICommand GetLocationCommand { get; }
         public GeolocationPageViewModel(IMeteoHealthRepository meteoHealthRepository)
         {
             this.meteoHealthRepository = meteoHealthRepository;
-           
-            geocoder = new Geocoder();
-            MapClickedCommand = new Command<MapClickedEventArgs>(async e => await MapClickedAsync(e.Position));
-            GetLocationCommand = new Command(async () => await GetLocationAsync());
 
+            GetLocationCommand = new Command(async () => await GetLocationAsync());
             HandleMapClickedCommand = new Command<Position>(async pos => await HandleMapClickedAsync(pos));
-           
         }
-        private async Task HandleMapClickedAsync(Position position )
+        private async Task HandleMapClickedAsync(Position position)
         {
             if (!await ShowConfirmationDialog(position.Latitude.ToString(), position.Longitude.ToString()))
             {
@@ -45,8 +40,6 @@ namespace MeteoHealth.ViewModels
 
             try
             {
-
-              
                 await meteoHealthRepository.SaveGeolocationModelAsync(new GeolocationModel
                 {
                     DateTime = DateTime.Now.ToString(),
@@ -54,36 +47,7 @@ namespace MeteoHealth.ViewModels
                     Longitude = position.Longitude
                 });
 
-              
-                GeoLabel = $"Lat: {position.Latitude}, Long: {position.Longitude}";
             }
-       
-            catch (Exception ex)
-            {
-                await Application.Current.MainPage.DisplayAlert("Error", $"Something went wrong. Please try again later. {ex.Message}", "OK");
-            }
-          
-        }
-
-        
-        public async Task<bool> ShowConfirmationDialog(string latitude, string longitude)
-        {
-            return await Application.Current.MainPage.DisplayAlert("Alert",
-                $"Are you sure you want to use {latitude} - {longitude} as your position?", "Ok", "Cancel");
-        }
-        private async Task MapClickedAsync(Position position)
-        {
-            if (!await ShowConfirmationDialog(position.Latitude.ToString(), position.Longitude.ToString()))
-            {
-                return;
-            }
-            try
-            {
-             
-                GeoLabel = $"Lat: {position.Latitude}, Long: {position.Longitude}";
-                await Application.Current.MainPage.DisplayAlert("Coordinates", GeoLabel, "OK");
-            }
-
             catch (FeatureNotEnabledException)
             {
                 await Application.Current.MainPage.DisplayAlert("Location Services are Disabled", "Please enable location services to use this feature.", "OK");
@@ -97,8 +61,16 @@ namespace MeteoHealth.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error", $"Something went wrong. Please try again later. {ex.Message}", "OK");
             }
         }
+
+
+        public async Task<bool> ShowConfirmationDialog(string latitude, string longitude)
+        {
+            return await Application.Current.MainPage.DisplayAlert("Alert",
+                $"Are you sure you want to use {latitude} - {longitude} as your position?", "Ok", "Cancel");
+        }
         private async Task GetLocationAsync()
         {
+           
             try
             {
                 var result = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Lowest, TimeSpan.FromSeconds(10)));
@@ -109,10 +81,6 @@ namespace MeteoHealth.ViewModels
                 }
                 if (result != null)
                 {
-                   
-                    var addresses = await geocoder.GetAddressesForPositionAsync(new Position(result.Latitude, result.Longitude));
-                    GeoLabel = addresses.FirstOrDefault().ToString();
-
                     await meteoHealthRepository.SaveGeolocationModelAsync(new GeolocationModel
                     {
                         DateTime = DateTime.Now.ToString(),
@@ -121,7 +89,6 @@ namespace MeteoHealth.ViewModels
                     });
 
                     await Application.Current.MainPage.DisplayAlert("Success", "Location has been successfully saved.", "OK");
-
                 }
             }
             catch (FeatureNotEnabledException)
@@ -136,18 +103,6 @@ namespace MeteoHealth.ViewModels
             catch (Exception ex)
             {
                 await Application.Current.MainPage.DisplayAlert("Error", $"Something went wrong. Please try again later. {ex.Message}" , "OK");
-            }
-        }
-        public ICommand MapClickedCommand { get; }
-        public ICommand GetLocationCommand { get; }
-
-        private string geoLabel;
-        public string GeoLabel
-        {
-            get { return geoLabel; } set
-            {
-                geoLabel = value;
-                OnPropertyChanged();
             }
         }
     }

@@ -165,35 +165,13 @@ namespace MeteoHealth.ViewModels
             {
                 await Application.Current.MainPage.DisplayAlert("Ooops", "Not enough data to summarize. Please continue to check your health state.", "OK");
                 return;
-                //PossibleRelationshipLabelIsVisible = false;
             }
             catch(Exception ex )
             {
                 await Application.Current.MainPage.DisplayAlert("Error", $"Something went wrong. Please try again later. {ex.Message}", "OK");
                 return;
             }
-            /*var result*/
-
-            //if (/*result*/reportModel == null)
-            //{
-            //    await Application.Current.MainPage.DisplayAlert("Ooops", "Not enough data to summarize. Please continue to check your health state.", "OK");
-            //    return;
-            //}
-            //PossibleRelationshipLabelIsVisible = true;
-            //reportModel = await reportMaker.GetReport(cancellationToken);
-            //reportModel = new ReportModel
-            //{
-            //    TemperatureRelation = 0.15,
-            //    HumidityRelation = 0.50,
-            //    PressureRelation = 0.87,
-            //    PrecVolRelation = 0.45,
-            //    PrecProbabilityRelation = 0.8,
-            //    WindRelation = 0.01,
-            //    FullRelation = 0.005,
-            //    FirstDate = "2000.05.15",
-            //    LastDate = "2010.04.15"
-            //};
-
+  
             IsBiggerThanThresholdValue(reportModel);
             ChangeNaming(ref listOfPotentionalRelations);
             ChangeNaming(ref listOfPossibleRelations);
@@ -226,7 +204,7 @@ namespace MeteoHealth.ViewModels
             var dates =await reportMaker.CheckAbsentDates(cancellationToken);
             if (dates.Count == 0)
             {
-                return;
+                throw new NotEnoughDataToReportException();
             }
             else
             {
@@ -306,8 +284,6 @@ namespace MeteoHealth.ViewModels
         public void GetReportDetails()
         {
 
-            //days in report 
-            //table
             DateTime.TryParse(reportModel.FirstDate, out var firstDate);
             DateTime.TryParse(reportModel.LastDate, out var lastDate);
 
@@ -337,13 +313,11 @@ namespace MeteoHealth.ViewModels
             }
         }
 
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName )
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
     }
 }
